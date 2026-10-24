@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 
 
@@ -20,7 +22,7 @@ public class ProductRequest {
 
     @NotNull(message = "El precio del producto es obligatorio")
     @Min(value = 0, message = "El precio del producto debe ser mayor o igual a cero")
-    private Double price;
+    private BigDecimal price;
 
     @NotBlank(message = "La URL de la imagen del producto es obligatoria")
     private String imageUrl;

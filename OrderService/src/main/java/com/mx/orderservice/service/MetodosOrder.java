@@ -1,9 +1,9 @@
 package com.mx.orderservice.service;
 
-import com.mx.orderservice.entity.Order;
+
 import com.mx.orderservice.model.OrderRequest;
 import com.mx.orderservice.model.OrderResponse;
-import org.springframework.http.ResponseEntity;
+
 
 public interface MetodosOrder {
 
