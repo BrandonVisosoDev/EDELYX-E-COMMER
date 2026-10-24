@@ -1,8 +1,12 @@
 package com.mx.catalogservice.service;
 
 import com.mx.catalogservice.entity.Products;
-import com.mx.catalogservice.model.Respuesta;
+import com.mx.catalogservice.model.ProductRequest;
+import com.mx.catalogservice.model.ProductResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+
+import java.awt.print.Pageable;
 
 public interface MetodosProducts {
 
@@ -10,19 +14,23 @@ public interface MetodosProducts {
 
     // CREATE
 
-    ResponseEntity<Respuesta> createProduct(Products products);
+    ProductResponse createProduct(ProductRequest request);
 
     // READ
 
-    ResponseEntity<Respuesta> listProducts();
+    Page<ProductResponse> listProducts(Pageable pageable);
+
+    // READ BY ID
+
+    ProductResponse getProductById(Long id);
 
     // UPDATE
 
-    ResponseEntity<Respuesta> updateProduct(Products products);
+    ProductResponse updateProduct(Long id, ProductRequest request);
 
     // DELETE
 
-    ResponseEntity<Respuesta> deleteProductById(Long id);
+    void desactivateProduct(Long id);
 
 
 

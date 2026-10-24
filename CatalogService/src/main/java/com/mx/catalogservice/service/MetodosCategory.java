@@ -1,8 +1,11 @@
 package com.mx.catalogservice.service;
 
 import com.mx.catalogservice.entity.Category;
-import com.mx.catalogservice.model.Respuesta;
+import com.mx.catalogservice.model.CategoryRequest;
+import com.mx.catalogservice.model.CategoryResponse;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface MetodosCategory {
 
@@ -10,19 +13,19 @@ public interface MetodosCategory {
 
     // CREATE
 
-    ResponseEntity<Respuesta> createCategory(Category category);
+    CategoryResponse createCategory(Category category);
 
     // READ
 
-    ResponseEntity<Respuesta> listCategories();
+    List<CategoryResponse> listCategories();
 
     // UPDATE
 
-    ResponseEntity<Respuesta> updateCategory(Category category);
+    CategoryResponse updateCategory(Long id, CategoryRequest request);
 
-    // DELETE
+    // DELETE LOGIC
 
-    ResponseEntity<Respuesta> deleteCategoryById(Long id);
+   void desactivateCategory(Long id);
 
 
 

@@ -1,28 +1,28 @@
 package com.mx.orderservice.service;
 
 import com.mx.orderservice.entity.Order;
-import com.mx.orderservice.model.Respuesta;
+import com.mx.orderservice.model.OrderRequest;
+import com.mx.orderservice.model.OrderResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface MetodosOrder {
 
-    // Metodos CRUD DE ORDER
+  // Metodos De Order
 
-    // CREATE
+  // CASO 1: ANGULAR ENVIA EL CARRITO Y SE GENERA LA ORDEN
 
-    ResponseEntity<Respuesta> createOrder(Order order);
+  OrderResponse realizarCompra(OrderRequest request);
 
-    // READ
+  // CASO 2: ANGULAR PIDE VER EL RECIBO DE COMPRA MEDIANTE FOLIO
 
-    ResponseEntity<Respuesta> listOrders();
+  OrderResponse consultarPorFolio(String orderNumber);
 
-    // UPDATE
+  // CASO 3: UN ADMIN O PROCESO CANCELA LA COMPRA
+  // SE DEVUELVE EL RESPONSE ACTUALIZADO PARA QUE ANGULAR VEA EL STATUS
 
-    ResponseEntity<Respuesta> updateOrder(Order order);
+  OrderResponse cancelarOrden(String orderNumber);
 
-    // DELETE
 
-    ResponseEntity<Respuesta> deleteOrderById(Long id);
 
 
 
