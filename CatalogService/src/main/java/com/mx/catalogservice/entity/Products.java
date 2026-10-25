@@ -34,7 +34,7 @@ public class Products {
     private String description;
     private BigDecimal price;
     private Integer stock;
-    private String imgUrl;
+    private String imageUrl;
     private Boolean active;
     private Category category;
     private LocalDateTime createdAt;

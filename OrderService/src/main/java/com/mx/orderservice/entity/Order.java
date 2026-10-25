@@ -35,7 +35,7 @@ public class Order {
     private String orderNumber;
     private String customerEmail;
     private BigDecimal totalAmount;
-    private List<OrderItem> orderItems;
+    private List<OrderItem> items;
     private LocalDateTime createdAt;
 
     // Importamos el enum OrderStatus

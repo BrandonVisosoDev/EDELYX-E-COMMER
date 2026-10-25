@@ -24,11 +24,13 @@ public class ProductRequest {
     @Min(value = 0, message = "El precio del producto debe ser mayor o igual a cero")
     private BigDecimal price;
 
+    @NotNull(message = "El stock del producto es obligatorio")
+    @Min(value = 0, message = "El stock del producto debe ser mayor o igual a cero")
+    private Integer stock;
+
     @NotBlank(message = "La URL de la imagen del producto es obligatoria")
     private String imageUrl;
 
     @NotNull(message = "El ID de la categoría es obligatorio")
     private Long categoryId;
-
-
 }

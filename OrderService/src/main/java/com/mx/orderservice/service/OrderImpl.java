@@ -1,11 +1,12 @@
 package com.mx.orderservice.service;
 
-import com.mx.orderservice.OrderRequest;
-import com.mx.orderservice.OrderResponse;
-import com.mx.orderservice.OrderItemRequest;
-import com.mx.orderservice.OrderItemResponse;
 import com.mx.orderservice.entity.Order;
 import com.mx.orderservice.entity.OrderItem;
+import com.mx.orderservice.model.OrderItemRequest;
+import com.mx.orderservice.model.OrderItemResponse;
+import com.mx.orderservice.model.OrderRequest;
+import com.mx.orderservice.model.OrderResponse;
+import com.mx.orderservice.model.OrderStatus;
 import com.mx.orderservice.repository.OrderDao;
 // import com.mx.orderservice.client.CatalogClient; // (FeignClient que configuraremos luego)
 
@@ -22,11 +23,11 @@ import java.util.UUID;
 public class OrderImpl implements MetodosOrder {
 
     private final OrderDao orderDao;
-    private final CatalogClient catalogClient;
+    // private final CatalogClient catalogClient;
 
-    public OrderImpl(OrderDao orderDao, CatalogClient catalogClient) {
+    public OrderImpl(OrderDao orderDao /*, CatalogClient catalogClient */) {
         this.orderDao = orderDao;
-        this.catalogClient = catalogClient;
+        // this.catalogClient = catalogClient;
     }
 
     // 1. CASO DE USO: CHECKOUT (Crear la orden)
@@ -37,7 +38,7 @@ public class OrderImpl implements MetodosOrder {
         Order nuevaOrden = new Order();
         nuevaOrden.setOrderNumber("ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         nuevaOrden.setCustomerEmail(request.getCustomerEmail());
-        nuevaOrden.setStatus("CREATED");
+        nuevaOrden.setStatus(OrderStatus.CREATED);
         nuevaOrden.setCreatedAt(LocalDateTime.now());
 
         BigDecimal granTotal = BigDecimal.ZERO;
@@ -45,23 +46,26 @@ public class OrderImpl implements MetodosOrder {
 
         for (OrderItemRequest itemRequest : request.getItems()) {
 
-            // Hablamos por red con el catalog-service
+            // TODO (OpenFeign): Cuando se active OpenFeign, descomentar la consulta remota
+            /*
             ProductResponse productoReal = catalogClient.getProductById(itemRequest.getProductId());
 
             if (productoReal.getStock() < itemRequest.getQuantity()) {
                 throw new IllegalArgumentException("No hay stock suficiente para: " + productoReal.getName());
             }
+            */
 
+            // Datos temporales mientras se habilita el cliente Feign
             OrderItem nuevoItem = new OrderItem();
             nuevoItem.setOrder(nuevaOrden);
-            nuevoItem.setProductId(productoReal.getId());
-            nuevoItem.setProductName(productoReal.getName());
-            nuevoItem.setUnitPrice(productoReal.getPrice());
+            nuevoItem.setProductId(itemRequest.getProductId());
+            nuevoItem.setProductName("Producto #" + itemRequest.getProductId());
+            nuevoItem.setUnitPrice(BigDecimal.ZERO);
             nuevoItem.setQuantity(itemRequest.getQuantity());
 
             itemsAguardar.add(nuevoItem);
 
-            BigDecimal subTotal = productoReal.getPrice().multiply(new BigDecimal(itemRequest.getQuantity()));
+            BigDecimal subTotal = nuevoItem.getUnitPrice().multiply(new BigDecimal(itemRequest.getQuantity()));
             granTotal = granTotal.add(subTotal);
         }
 
@@ -93,11 +97,11 @@ public class OrderImpl implements MetodosOrder {
             .orElseThrow(() -> new IllegalArgumentException("No existe una orden con el folio: " + orderNumber));
 
         // Regla de negocio: No puedes cancelar una orden que ya fue enviada o completada
-        if(ordenExistente.getStatus().equals("SHIPPED") || ordenExistente.getStatus().equals("COMPLETED")) {
+        if(ordenExistente.getStatus() == OrderStatus.SHIPPED || ordenExistente.getStatus() == OrderStatus.COMPLETED) {
             throw new IllegalStateException("No se puede cancelar una orden que ya está en estado: " + ordenExistente.getStatus());
         }
 
-        ordenExistente.setStatus("CANCELLED");
+        ordenExistente.setStatus(OrderStatus.CANCELLED);
 
         // (NOTA FUTURA: Si cancelas, aquí mandas un mensaje por RabbitMQ para que
         // el catalog-service le regrese el stock a los productos).
@@ -124,7 +128,7 @@ public class OrderImpl implements MetodosOrder {
             .orderNumber(orden.getOrderNumber())
             .customerEmail(orden.getCustomerEmail())
             .totalAmount(orden.getTotalAmount())
-            .status(orden.getStatus())
+            .status(orden.getStatus() != null ? orden.getStatus().name() : null)
             .createdAt(orden.getCreatedAt())
             .items(itemResponses)
             .build();
