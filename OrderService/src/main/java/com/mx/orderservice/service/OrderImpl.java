@@ -1,5 +1,6 @@
 package com.mx.orderservice.service;
 
+import com.mx.orderservice.client.CatalogClient;
 import com.mx.orderservice.entity.Order;
 import com.mx.orderservice.entity.OrderItem;
 import com.mx.orderservice.model.OrderItemRequest;
@@ -7,8 +8,9 @@ import com.mx.orderservice.model.OrderItemResponse;
 import com.mx.orderservice.model.OrderRequest;
 import com.mx.orderservice.model.OrderResponse;
 import com.mx.orderservice.model.OrderStatus;
+import com.mx.orderservice.model.ProductResponse;
 import com.mx.orderservice.repository.OrderDao;
-// import com.mx.orderservice.client.CatalogClient; // (FeignClient que configuraremos luego)
+
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +25,11 @@ import java.util.UUID;
 public class OrderImpl implements MetodosOrder {
 
     private final OrderDao orderDao;
-    // private final CatalogClient catalogClient;
+    private final CatalogClient catalogClient;
 
-    public OrderImpl(OrderDao orderDao /*, CatalogClient catalogClient */) {
+    public OrderImpl(OrderDao orderDao , CatalogClient catalogClient) {
         this.orderDao = orderDao;
-        // this.catalogClient = catalogClient;
+         this.catalogClient = catalogClient;
     }
 
     // 1. CASO DE USO: CHECKOUT (Crear la orden)
@@ -46,21 +48,20 @@ public class OrderImpl implements MetodosOrder {
 
         for (OrderItemRequest itemRequest : request.getItems()) {
 
-            // TODO (OpenFeign): Cuando se active OpenFeign, descomentar la consulta remota
-            /*
+
             ProductResponse productoReal = catalogClient.getProductById(itemRequest.getProductId());
 
             if (productoReal.getStock() < itemRequest.getQuantity()) {
                 throw new IllegalArgumentException("No hay stock suficiente para: " + productoReal.getName());
             }
-            */
 
-            // Datos temporales mientras se habilita el cliente Feign
+
+            // Snapshot histórico: congelar nombre y precio real obtenidos de CatalogService
             OrderItem nuevoItem = new OrderItem();
             nuevoItem.setOrder(nuevaOrden);
             nuevoItem.setProductId(itemRequest.getProductId());
-            nuevoItem.setProductName("Producto #" + itemRequest.getProductId());
-            nuevoItem.setUnitPrice(BigDecimal.ZERO);
+            nuevoItem.setProductName(productoReal.getName());
+            nuevoItem.setUnitPrice(productoReal.getPrice());
             nuevoItem.setQuantity(itemRequest.getQuantity());
 
             itemsAguardar.add(nuevoItem);
