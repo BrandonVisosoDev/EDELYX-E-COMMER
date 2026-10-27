@@ -4,6 +4,7 @@ package com.mx.catalogservice.service;
 
 import com.mx.catalogservice.entity.Category;
 import com.mx.catalogservice.entity.Products;
+import com.mx.catalogservice.event.OrderItemStockDto;
 import com.mx.catalogservice.model.ProductRequest;
 import com.mx.catalogservice.model.ProductResponse;
 import com.mx.catalogservice.repository.CategoryDao;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -172,4 +175,35 @@ public class ProductsImpl implements MetodosProducts {
         // 3. PERSISTIMOS EL PRODUCTO EN LA BASE DE DATOS
         productsDao.save(productoExistente);
     }
+
+    // DEL RABBIT
+
+    @Override
+    @Transactional
+    public void descontarStock(List<OrderItemStockDto> items) {
+        for (OrderItemStockDto item : items) {
+            Products producto = productsDao.findById(item.productId())
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con ID: " + item.productId()));
+
+            int nuevoStock = Math.max(0, producto.getStock() - item.quantity());
+            producto.setStock(nuevoStock);
+            productsDao.save(producto);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void reintegrarStock(List<OrderItemStockDto> items) {
+        for (OrderItemStockDto item : items) {
+            Products producto = productsDao.findById(item.productId())
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con ID: " + item.productId()));
+
+            producto.setStock(producto.getStock() + item.quantity());
+            productsDao.save(producto);
+        }
+    }
+
+
+
+
 }

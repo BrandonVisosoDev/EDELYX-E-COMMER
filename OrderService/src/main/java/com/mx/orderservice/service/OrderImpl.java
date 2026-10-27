@@ -1,8 +1,12 @@
 package com.mx.orderservice.service;
 
 import com.mx.orderservice.client.CatalogClient;
+import com.mx.orderservice.config.RabbitMQConfig;
 import com.mx.orderservice.entity.Order;
 import com.mx.orderservice.entity.OrderItem;
+import com.mx.orderservice.event.OrderCancelledEvent;
+import com.mx.orderservice.event.OrderCreatedEvent;
+import com.mx.orderservice.event.OrderItemStockDto;
 import com.mx.orderservice.model.OrderItemRequest;
 import com.mx.orderservice.model.OrderItemResponse;
 import com.mx.orderservice.model.OrderRequest;
@@ -12,6 +16,7 @@ import com.mx.orderservice.model.ProductResponse;
 import com.mx.orderservice.repository.OrderDao;
 
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +31,12 @@ public class OrderImpl implements MetodosOrder {
 
     private final OrderDao orderDao;
     private final CatalogClient catalogClient;
+    private final RabbitTemplate rabbitTemplate;
 
-    public OrderImpl(OrderDao orderDao , CatalogClient catalogClient) {
-        this.orderDao = orderDao;
+    public OrderImpl(OrderDao orderDao , CatalogClient catalogClient, RabbitTemplate rabbitTemplate) {
+         this.orderDao = orderDao;
          this.catalogClient = catalogClient;
+         this.rabbitTemplate = rabbitTemplate;
     }
 
     // 1. CASO DE USO: CHECKOUT (Crear la orden)
@@ -75,6 +82,27 @@ public class OrderImpl implements MetodosOrder {
 
         Order ordenGuardada = orderDao.save(nuevaOrden);
 
+        // Mapeamos los items al DTO del evento
+
+        List<OrderItemStockDto> itemsEvent = ordenGuardada.getItems().stream()
+            .map(item -> new OrderItemStockDto(item.getProductId(),
+                item.getQuantity()))
+            .toList();
+
+        OrderCreatedEvent event = new OrderCreatedEvent(ordenGuardada.getOrderNumber(), itemsEvent);
+
+
+        // Enviamos el mensaje a RabbitMQ
+
+        rabbitTemplate.convertAndSend(
+
+            RabbitMQConfig.EXCHANGE_NAME,
+            RabbitMQConfig.ROUTING_KEY_ORDER_CREATED,
+            event
+
+
+        );
+
         return mapToOrderResponse(ordenGuardada);
     }
 
@@ -108,6 +136,25 @@ public class OrderImpl implements MetodosOrder {
         // el catalog-service le regrese el stock a los productos).
 
         Order ordenActualizada = orderDao.save(ordenExistente);
+
+        List<OrderItemStockDto> itemsDevueltos = ordenActualizada.getItems().stream()
+            .map(item -> new OrderItemStockDto (item.getProductId(),
+                item.getQuantity())).toList();
+
+
+        OrderCancelledEvent eventCancelacion = new OrderCancelledEvent(ordenActualizada.getOrderNumber(), itemsDevueltos);
+
+        // ENVIAR MENSAJE AL RABBIT
+
+        rabbitTemplate.convertAndSend(
+
+            RabbitMQConfig.EXCHANGE_NAME,
+            RabbitMQConfig.ROUTING_KEY_ORDER_CANCELLED,
+            eventCancelacion
+
+
+        );
+
 
         return mapToOrderResponse(ordenActualizada);
     }
