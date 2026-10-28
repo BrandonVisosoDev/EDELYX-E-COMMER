@@ -1,0 +1,50 @@
+name: Backend CI Pipeline
+
+on:
+  push:
+    branches: [ edelyx, main ]
+  pull_request:
+    branches: [ edelyx, main ]
+
+jobs:
+  test-and-build:
+    name: Build & Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Descargar codigo fuente del repositorio
+        uses: actions/checkout@v4
+
+      - name: 2. Configurar Java 21 (Temurin) con cache de Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: 3. Otorgar permisos de ejecucion a los wrappers de Maven
+        run: |
+          chmod +x EurekaServer/mvnw
+          chmod +x CatalogService/mvnw
+          chmod +x OrderService/mvnw
+          chmod +x gateway/mvnw
+
+      - name: 4. Ejecutar pruebas unitarias de EurekaServer
+        run: |
+          cd EurekaServer
+          ./mvnw test
+
+      - name: 5. Ejecutar pruebas unitarias de CatalogService
+        run: |
+          cd CatalogService
+          ./mvnw test
+
+      - name: 6. Ejecutar pruebas unitarias de OrderService
+        run: |
+          cd OrderService
+          ./mvnw test
+
+      - name: 7. Ejecutar pruebas unitarias de Gateway
+        run: |
+          cd gateway
+          ./mvnw test
