@@ -1,0 +1,19 @@
+<div
+  class="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-6 gap-6"
+>
+  <div class="p-8 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 text-center max-w-md">
+    <i class="pi pi-shopping-bag text-5xl text-emerald-400 mb-4 animate-bounce"></i>
+    <h1
+      class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent"
+    >
+      EDELYX E-COMMER
+    </h1>
+    <p class="text-slate-400 mt-2 text-sm">Tailwind CSS + PrimeNG configurados correctamente.</p>
+    <div class="mt-6 flex justify-center gap-3">
+      <p-button label="Ver Catálogo" icon="pi pi-list" severity="success" />
+      <p-button label="Carrito" icon="pi pi-shopping-cart" severity="secondary" [outlined]="true" />
+    </div>
+  </div>
+
+  <router-outlet />
+</div>

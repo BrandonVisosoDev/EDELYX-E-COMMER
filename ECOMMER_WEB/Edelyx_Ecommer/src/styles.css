@@ -1,0 +1,7 @@
+/* Íconos de PrimeNG (carrito, lupa, estrellas, etc.) */
+@import 'primeicons/primeicons.css';
+
+/* Capas base de Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
