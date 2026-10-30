@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
+import { NavbarComponent } from './core/layout/navbar/navbar.component';
 
 @Component({
-  imports: [RouterOutlet, ButtonModule],
+  imports: [RouterOutlet, NavbarComponent],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
