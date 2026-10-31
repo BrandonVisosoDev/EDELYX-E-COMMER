@@ -7,6 +7,7 @@ import { CategoryService } from '../../services/category.service';
 import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product.model';
 import { Category } from '../../models/category.model';
+import { extractApiErrorMessage } from '../../core/utils/http-error.util';
 
 export interface PriceRangeOption {
   id: string;
@@ -183,7 +184,10 @@ export class CatalogComponent implements OnInit {
         error: (err) => {
           console.error('Error al cargar catálogo:', err);
           this.errorMessage.set(
-            'No se pudo conectar con el microservicio de catálogo. Verifica que el API Gateway (8080) esté activo.',
+            extractApiErrorMessage(
+              err,
+              'El catálogo de productos no se encuentra disponible temporalmente. Por favor, intenta de nuevo en unos momentos.',
+            ),
           );
           this.isLoading.set(false);
         },
