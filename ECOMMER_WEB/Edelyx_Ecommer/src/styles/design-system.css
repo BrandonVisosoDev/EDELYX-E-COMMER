@@ -569,4 +569,217 @@
   .edelyx-page-num-active {
     @apply bg-edelyx-wine text-white border-x border-edelyx-accent font-bold;
   }
+
+  /* ========================================================================
+     9. DRAWER LATERAL DEL CARRITO (.edelyx-drawer-*)
+     ======================================================================== */
+  .edelyx-drawer-root {
+    @apply fixed inset-0 z-[70] pointer-events-none invisible;
+  }
+
+  .edelyx-drawer-root-open {
+    @apply pointer-events-auto visible;
+  }
+
+  .edelyx-drawer-backdrop {
+    @apply fixed inset-0 bg-black/75 backdrop-blur-sm opacity-0 cursor-pointer;
+  }
+
+  .edelyx-drawer-panel {
+    @apply fixed top-0 right-0 h-full w-full max-w-[440px] bg-edelyx-bg border-l border-edelyx-border shadow-[-24px_0_60px_rgba(0,0,0,0.88)] flex flex-col z-10;
+  }
+
+  /* Cabecera del Drawer */
+  .edelyx-drawer-header {
+    @apply px-6 py-4 bg-edelyx-dark border-b border-edelyx-border/80 flex items-center justify-between gap-3 shrink-0;
+  }
+
+  .edelyx-drawer-title-group {
+    @apply flex items-center gap-3;
+  }
+
+  .edelyx-drawer-title {
+    @apply font-teko text-3xl font-semibold uppercase tracking-wider text-white leading-none pt-0.5;
+  }
+
+  .edelyx-drawer-count-badge {
+    @apply px-2.5 py-0.5 rounded-full bg-edelyx-wine border border-edelyx-accent/60 font-eczar text-xs font-bold text-white tabular-nums;
+  }
+
+  .edelyx-drawer-close-btn {
+    @apply w-9 h-9 rounded-lg bg-edelyx-card hover:bg-edelyx-wine border border-edelyx-border hover:border-edelyx-accent text-slate-200 hover:text-white flex items-center justify-center cursor-pointer transition-colors duration-150;
+  }
+
+  /* Aviso de límite de stock */
+  .edelyx-drawer-stock-alert {
+    @apply mx-6 mt-4 px-3.5 py-2.5 rounded-lg bg-edelyx-wine-dark/90 border border-edelyx-accent/70 text-xs font-eczar text-slate-100 flex items-center gap-2 shrink-0;
+  }
+
+  .edelyx-drawer-stock-alert-icon {
+    @apply text-edelyx-accent text-sm shrink-0;
+  }
+
+  /* Cuerpo desplazable de artículos */
+  .edelyx-drawer-body {
+    @apply flex-1 overflow-y-auto px-6 py-5;
+  }
+
+  .edelyx-drawer-list {
+    @apply space-y-3.5;
+  }
+
+  .edelyx-drawer-item {
+    @apply bg-edelyx-card border border-edelyx-border/80 hover:border-edelyx-rose/60 rounded-xl p-3.5 flex gap-3.5 transition-colors duration-150;
+  }
+
+  .edelyx-drawer-thumb-box {
+    @apply w-20 h-20 rounded-lg bg-[#F7F8FA] border border-edelyx-border/60 p-1.5 flex items-center justify-center shrink-0 overflow-hidden;
+  }
+
+  .edelyx-drawer-thumb-img {
+    @apply max-w-full max-h-full object-contain;
+  }
+
+  .edelyx-drawer-item-info {
+    @apply flex-1 min-w-0 flex flex-col justify-between gap-2;
+  }
+
+  .edelyx-drawer-item-top {
+    @apply flex items-start justify-between gap-2;
+  }
+
+  .edelyx-drawer-item-name {
+    @apply font-teko text-xl font-medium uppercase tracking-[0.03em] text-white leading-[1.08] line-clamp-2;
+  }
+
+  .edelyx-drawer-remove-btn {
+    @apply w-8 h-8 rounded-lg bg-edelyx-dark hover:bg-edelyx-wine text-edelyx-rose hover:text-white border border-transparent hover:border-edelyx-accent/70 flex items-center justify-center shrink-0 cursor-pointer transition-colors duration-150;
+  }
+
+  .edelyx-drawer-item-meta {
+    @apply flex flex-wrap items-center justify-between gap-2;
+  }
+
+  .edelyx-drawer-unit-price {
+    @apply font-eczar text-xs text-edelyx-muted tabular-nums;
+  }
+
+  .edelyx-drawer-stock-tag {
+    @apply text-[11px] font-eczar text-edelyx-rose tabular-nums;
+  }
+
+  .edelyx-drawer-stock-max {
+    @apply text-edelyx-accent font-semibold;
+  }
+
+  /* Controles de cantidad y subtotal por artículo */
+  .edelyx-drawer-item-bottom {
+    @apply pt-2 border-t border-edelyx-border/50 flex items-center justify-between gap-2;
+  }
+
+  .edelyx-drawer-qty-control {
+    @apply inline-flex items-center bg-edelyx-dark border border-edelyx-border rounded-lg overflow-hidden;
+  }
+
+  .edelyx-drawer-qty-btn {
+    @apply w-8 h-8 flex items-center justify-center text-slate-200 hover:text-white hover:bg-edelyx-wine/80 text-xs cursor-pointer transition-colors duration-150 disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-transparent;
+  }
+
+  .edelyx-drawer-qty-value {
+    @apply min-w-[2.25rem] px-2 text-center font-eczar text-sm font-bold text-white tabular-nums select-none border-x border-edelyx-border/60;
+  }
+
+  .edelyx-drawer-subtotal-group {
+    @apply text-right leading-none;
+  }
+
+  .edelyx-drawer-subtotal-label {
+    @apply block text-[10px] uppercase tracking-wider text-edelyx-rose mb-0.5;
+  }
+
+  .edelyx-drawer-subtotal-value {
+    @apply font-eczar text-base font-bold text-white tabular-nums;
+  }
+
+  /* Estado Vacío del Carrito */
+  .edelyx-drawer-empty {
+    @apply h-full min-h-[340px] flex flex-col items-center justify-center text-center px-4 py-10;
+  }
+
+  .edelyx-drawer-empty-badge {
+    @apply w-20 h-20 rounded-2xl bg-edelyx-card border border-edelyx-border flex items-center justify-center text-3xl text-edelyx-rose mb-5;
+  }
+
+  .edelyx-drawer-empty-title {
+    @apply font-teko text-3xl uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-drawer-empty-desc {
+    @apply font-eczar text-sm text-edelyx-muted max-w-[290px] leading-relaxed mt-2 mb-6;
+  }
+
+  .edelyx-drawer-explore-btn {
+    @apply bg-edelyx-wine hover:bg-edelyx-accent text-white font-teko text-xl uppercase tracking-wider px-7 py-2.5 rounded-full border border-edelyx-accent/60 transition-colors duration-200 flex items-center gap-2 cursor-pointer;
+  }
+
+  /* Pie Financiero y Acciones del Drawer */
+  .edelyx-drawer-footer {
+    @apply px-6 py-5 bg-edelyx-dark border-t border-edelyx-border shrink-0 space-y-4;
+  }
+
+  .edelyx-drawer-summary {
+    @apply space-y-2;
+  }
+
+  .edelyx-drawer-summary-row {
+    @apply flex items-center justify-between text-sm font-eczar;
+  }
+
+  .edelyx-drawer-summary-label {
+    @apply text-edelyx-muted;
+  }
+
+  .edelyx-drawer-summary-value {
+    @apply text-slate-100 font-semibold tabular-nums;
+  }
+
+  .edelyx-drawer-shipping-free {
+    @apply font-bold text-emerald-400 tracking-wide;
+  }
+
+  .edelyx-drawer-total-row {
+    @apply pt-3 mt-2 border-t border-edelyx-border/80 flex items-baseline justify-between gap-3;
+  }
+
+  .edelyx-drawer-total-label {
+    @apply font-teko text-2xl uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-drawer-total-note {
+    @apply block font-eczar text-[11px] text-edelyx-rose mt-0.5;
+  }
+
+  .edelyx-drawer-total-price {
+    @apply inline-flex items-start font-eczar text-white leading-none tabular-nums;
+  }
+
+  .edelyx-drawer-total-currency {
+    @apply text-sm font-semibold text-edelyx-rose mt-1 mr-0.5;
+  }
+
+  .edelyx-drawer-total-integer {
+    @apply text-3xl font-bold tracking-tight text-white leading-none;
+  }
+
+  .edelyx-drawer-total-cents {
+    @apply text-xs font-bold text-slate-200 mt-0.5 ml-0.5;
+  }
+
+  .edelyx-drawer-actions {
+    @apply space-y-2.5 pt-1;
+  }
+
+  .edelyx-drawer-clear-btn {
+    @apply w-full py-2 px-4 rounded-xl border border-edelyx-border hover:border-edelyx-accent/80 bg-edelyx-card hover:bg-edelyx-wine-dark/70 text-edelyx-rose hover:text-white font-teko text-lg uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-colors duration-150;
+  }
 }

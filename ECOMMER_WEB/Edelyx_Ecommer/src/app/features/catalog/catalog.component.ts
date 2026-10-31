@@ -232,13 +232,21 @@ export class CatalogComponent implements OnInit {
 
   addToCart(product: Product): void {
     if (product.stock <= 0) return;
-    this.cartService.addItem(product);
+    const result = this.cartService.addItem(product);
+    if (!result.success) {
+      this.cartService.openDrawer();
+      return;
+    }
     this.recentlyAddedId.set(product.id);
     setTimeout(() => {
       if (this.recentlyAddedId() === product.id) {
         this.recentlyAddedId.set(null);
       }
     }, 1100);
+  }
+
+  isMaxStockReached(product: Product): boolean {
+    return product.stock > 0 && this.cartService.getItemQuantity(product.id) >= product.stock;
   }
 
   isRecentlyAdded(productId: number): boolean {

@@ -282,7 +282,7 @@
                   <div class="edelyx-card-cta">
                     <button
                       type="button"
-                      [disabled]="product.stock === 0"
+                      [disabled]="product.stock === 0 || isMaxStockReached(product)"
                       (click)="addToCart(product)"
                       [class.edelyx-btn-added]="isRecentlyAdded(product.id)"
                       class="edelyx-btn-primary"
@@ -297,6 +297,8 @@
                           Agotado
                         } @else if (isRecentlyAdded(product.id)) {
                           Agregado al carrito
+                        } @else if (isMaxStockReached(product)) {
+                          Máx. en carrito ({{ product.stock }})
                         } @else {
                           Agregar al carrito
                         }

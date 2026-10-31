@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import gsap from 'gsap';
 import { CategoryService } from '../../../services/category.service';
 import { CartService } from '../../../services/cart.service';
 import { Category } from '../../../models/category.model';
@@ -14,17 +15,51 @@ import { Category } from '../../../models/category.model';
 })
 export class NavbarComponent implements OnInit {
   private readonly categoryService = inject(CategoryService);
-  private readonly cartService = inject(CartService);
+  readonly cartService = inject(CartService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+
+  readonly counterRef = viewChild<ElementRef<HTMLElement>>('cartCounter');
 
   // Estados Reactivos con Signals
   categories = signal<Category[]>([]);
   selectedCategoryId = signal<string>('');
   searchQuery = signal<string>('');
 
-  // Contador reactivo compartido con el catálogo
-  cartCount = this.cartService.cartCount;
+  // Contador reactivo compartido con el catálogo y drawer
+  totalItems = this.cartService.totalItems;
+  cartCount = this.cartService.totalItems;
+
+  private initializedCounter = false;
+
+  constructor() {
+    effect(() => {
+      const count = this.totalItems();
+      const badge = this.counterRef()?.nativeElement;
+      if (!this.initializedCounter) {
+        this.initializedCounter = true;
+        return;
+      }
+      if (
+        badge &&
+        count >= 0 &&
+        typeof window !== 'undefined' &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        gsap.fromTo(
+          badge,
+          { scale: 1.32 },
+          {
+            scale: 1,
+            duration: 0.28,
+            ease: 'back.out(2.4)',
+            overwrite: 'auto',
+            clearProps: 'transform',
+          },
+        );
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe({

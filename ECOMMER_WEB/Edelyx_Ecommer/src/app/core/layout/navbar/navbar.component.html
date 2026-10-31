@@ -65,10 +65,15 @@
         <span class="edelyx-nav-action-title">Mis Pedidos</span>
       </a>
 
-      <button type="button" class="edelyx-cart-btn" aria-label="Ver carrito de compras">
+      <button
+        type="button"
+        (click)="cartService.openDrawer()"
+        class="edelyx-cart-btn"
+        aria-label="Ver carrito de compras"
+      >
         <i class="pi pi-shopping-cart edelyx-cart-icon"></i>
         <span class="edelyx-cart-label">Carrito</span>
-        <span class="edelyx-cart-counter">{{ cartCount() }}</span>
+        <span #cartCounter class="edelyx-cart-counter">{{ totalItems() }}</span>
       </button>
     </div>
   </div>
