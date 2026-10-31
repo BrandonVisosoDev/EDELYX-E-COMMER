@@ -1,0 +1,1518 @@
+/* ==========================================================================
+   EDELYX OFFICIAL DESIGN SYSTEM
+   Arquitectura Semántica Zero-Utility-Soup (@layer base + @layer components)
+   Paleta Oficial: #040B15 | #640000 | #400001 | #B67E7D | #FF1756 | #454545
+   Tipografías: Teko (Títulos / Marca) & Eczar (Precios / Editorial)
+   ========================================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background-color: #040b15;
+    color: #f1f5f9;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #454545 #040b15;
+  }
+
+  body {
+    @apply bg-edelyx-bg text-slate-100 antialiased selection:bg-edelyx-accent selection:text-white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #040b15;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #454545;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #b67e7d;
+  }
+
+  :focus-visible {
+    outline: 2px solid #ff1756;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* ========================================================================
+     1. SHELL & CONTENEDORES GLOBALES
+     ======================================================================== */
+  .edelyx-page-bg {
+    @apply min-h-screen bg-edelyx-bg text-slate-100 flex flex-col;
+  }
+
+  .edelyx-main {
+    @apply flex-1 w-full;
+  }
+
+  .edelyx-container {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full;
+  }
+
+  .edelyx-footer {
+    @apply mt-12 border-t border-edelyx-border/70 bg-edelyx-dark py-6 px-4 text-center;
+  }
+
+  .edelyx-footer-brand {
+    @apply font-teko text-2xl uppercase tracking-[0.14em] text-white block leading-none;
+  }
+
+  .edelyx-footer-copy {
+    @apply font-eczar text-xs text-edelyx-rose mt-1 block;
+  }
+
+  /* ========================================================================
+     2. TOKENS TIPOGRÁFICOS CON IDENTIDAD
+     ======================================================================== */
+  .edelyx-heading {
+    @apply font-teko uppercase tracking-wider text-white;
+  }
+
+  .edelyx-editorial-text {
+    @apply font-eczar text-edelyx-muted;
+  }
+
+  /* ========================================================================
+     3. NAVBAR DE 2 NIVELES (Blueprint: BarraSinLogeo.png)
+     ======================================================================== */
+  .edelyx-nav-main {
+    @apply sticky top-0 z-50 bg-edelyx-bg border-b border-edelyx-border shadow-[0_12px_28px_rgba(0,0,0,0.65)];
+  }
+
+  .edelyx-nav-top {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 md:gap-5;
+  }
+
+  /* Marca / Logo EDELYX */
+  .edelyx-brand-link {
+    @apply flex items-center gap-2.5 shrink-0 cursor-pointer no-underline;
+  }
+
+  .edelyx-logo-badge {
+    @apply w-10 h-10 rounded-lg bg-gradient-to-br from-edelyx-accent via-edelyx-wine to-edelyx-wine-dark border border-edelyx-accent/50 flex items-center justify-center font-teko text-2xl font-bold text-white leading-none pt-0.5 shadow-[0_4px_14px_rgba(255,23,86,0.28)] transition-transform duration-200;
+  }
+
+  .edelyx-brand-link:hover .edelyx-logo-badge {
+    @apply scale-105;
+  }
+
+  .edelyx-brand-text {
+    @apply flex flex-col leading-none;
+  }
+
+  .edelyx-brand-title {
+    @apply font-teko text-3xl font-bold tracking-[0.1em] uppercase text-white leading-none;
+  }
+
+  .edelyx-brand-sub {
+    @apply text-[10px] font-semibold tracking-[0.22em] uppercase text-edelyx-rose -mt-0.5;
+  }
+
+  /* Indicador de Ubicación / Envío estilo Amazon */
+  .edelyx-location-pill {
+    @apply hidden xl:flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-transparent hover:border-edelyx-border transition-colors shrink-0;
+  }
+
+  .edelyx-location-icon {
+    @apply text-edelyx-accent text-sm mt-0.5;
+  }
+
+  .edelyx-location-overline {
+    @apply block text-[11px] text-edelyx-rose leading-tight;
+  }
+
+  .edelyx-location-value {
+    @apply block text-xs font-bold text-white leading-tight;
+  }
+
+  /* Buscador Central Integrado estilo Amazon */
+  .edelyx-search-box {
+    @apply order-3 md:order-none w-full md:w-auto md:flex-1 max-w-3xl flex items-stretch bg-edelyx-card border border-edelyx-border rounded-lg overflow-hidden focus-within:border-edelyx-accent focus-within:ring-2 focus-within:ring-edelyx-accent/30 transition-all duration-200;
+  }
+
+  .edelyx-search-select {
+    @apply bg-edelyx-wine-dark/80 hover:bg-edelyx-wine/80 text-slate-200 text-xs font-medium px-3 py-2.5 border-r border-edelyx-border outline-none cursor-pointer transition-colors max-w-[145px] sm:max-w-[185px] truncate;
+  }
+
+  .edelyx-search-select option,
+  .edelyx-sort-select option {
+    @apply bg-edelyx-card text-slate-100;
+  }
+
+  .edelyx-search-input {
+    @apply flex-1 min-w-0 bg-transparent text-sm text-white px-3.5 py-2.5 outline-none placeholder:text-slate-400;
+  }
+
+  .edelyx-search-btn {
+    @apply bg-edelyx-accent hover:bg-edelyx-accent-hover active:bg-edelyx-wine text-white px-5 flex items-center justify-center cursor-pointer transition-colors duration-200 font-bold shrink-0;
+  }
+
+  /* Acciones Derecha: Mis Pedidos & Carrito */
+  .edelyx-nav-actions {
+    @apply flex items-center gap-2 sm:gap-4 shrink-0;
+  }
+
+  .edelyx-nav-action-link {
+    @apply px-2.5 py-1 rounded-lg border border-transparent hover:border-edelyx-border flex flex-col items-start leading-tight transition-colors cursor-pointer no-underline;
+  }
+
+  .edelyx-nav-action-overline {
+    @apply text-[11px] text-edelyx-rose;
+  }
+
+  .edelyx-nav-action-title {
+    @apply font-teko text-lg uppercase tracking-wider text-white leading-none mt-0.5;
+  }
+
+  .edelyx-cart-btn {
+    @apply relative bg-edelyx-card hover:bg-edelyx-wine-dark/80 border border-edelyx-border hover:border-edelyx-accent px-3.5 py-2 rounded-lg text-white flex items-center gap-2 cursor-pointer transition-all duration-200;
+  }
+
+  .edelyx-cart-icon {
+    @apply text-lg text-edelyx-accent;
+  }
+
+  .edelyx-cart-label {
+    @apply hidden sm:inline font-teko text-lg uppercase tracking-wider leading-none pt-0.5;
+  }
+
+  .edelyx-cart-counter {
+    @apply absolute -top-2 -right-2 min-w-[1.3rem] h-5 px-1 rounded-full bg-edelyx-accent text-white text-[11px] font-extrabold flex items-center justify-center shadow-[0_2px_8px_rgba(255,23,86,0.55)];
+  }
+
+  /* Nivel 2: Sub-barra de Categorías */
+  .edelyx-nav-subbar {
+    @apply bg-edelyx-wine-dark/50 border-t border-edelyx-border/70;
+  }
+
+  .edelyx-nav-subbar-inner {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 py-1.5 flex items-center gap-1.5 overflow-x-auto;
+  }
+
+  .edelyx-subbar-all-btn {
+    @apply font-teko text-base uppercase tracking-wider px-3 py-1 rounded-md border border-edelyx-border bg-edelyx-card hover:border-edelyx-accent text-white flex items-center gap-2 whitespace-nowrap cursor-pointer transition-all duration-150 shrink-0;
+  }
+
+  .edelyx-subbar-all-active {
+    @apply border-edelyx-accent bg-edelyx-wine text-white;
+  }
+
+  .edelyx-subbar-link {
+    @apply text-xs font-medium text-slate-200 hover:text-white hover:bg-edelyx-wine/50 border border-transparent hover:border-edelyx-border/80 px-3 py-1.5 rounded-md whitespace-nowrap cursor-pointer transition-all duration-150 shrink-0;
+  }
+
+  .edelyx-subbar-link-active {
+    @apply bg-edelyx-wine text-white border-edelyx-accent font-semibold shadow-[0_0_12px_rgba(255,23,86,0.22)];
+  }
+
+  .edelyx-subbar-promo {
+    @apply ml-auto hidden lg:flex items-center gap-1.5 text-xs font-eczar text-edelyx-rose whitespace-nowrap pl-4;
+  }
+
+  .edelyx-subbar-promo-icon {
+    @apply text-edelyx-accent;
+  }
+
+  /* ========================================================================
+     4. BARRA DE RESULTADOS Y ORDENAMIENTO (Blueprint: ORDENAR)
+     ======================================================================== */
+  .edelyx-results-bar {
+    @apply bg-edelyx-dark border-b border-edelyx-border/80 py-2.5;
+  }
+
+  .edelyx-results-bar-inner {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .edelyx-results-summary {
+    @apply font-eczar text-xs sm:text-sm text-slate-300 flex flex-wrap items-center gap-1.5;
+  }
+
+  .edelyx-results-highlight {
+    @apply font-semibold text-edelyx-accent;
+  }
+
+  .edelyx-sort-group {
+    @apply flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end;
+  }
+
+  .edelyx-mobile-filter-btn {
+    @apply lg:hidden bg-edelyx-card hover:bg-edelyx-wine/60 border border-edelyx-border hover:border-edelyx-accent text-white font-teko text-base uppercase tracking-wider px-3 py-1 rounded-lg flex items-center gap-1.5 cursor-pointer transition-colors;
+  }
+
+  .edelyx-mobile-filter-active {
+    @apply bg-edelyx-wine border-edelyx-accent;
+  }
+
+  .edelyx-sort-control {
+    @apply flex items-center gap-2;
+  }
+
+  .edelyx-sort-label {
+    @apply text-xs text-edelyx-rose font-medium;
+  }
+
+  .edelyx-sort-select {
+    @apply bg-edelyx-card border border-edelyx-border hover:border-edelyx-accent focus:border-edelyx-accent rounded-lg px-3 py-1.5 text-xs text-white outline-none cursor-pointer transition-colors;
+  }
+
+  /* ========================================================================
+     5. LAYOUT DE CATÁLOGO A 2 COLUMNAS (Sidebar + Grid Principal)
+     ======================================================================== */
+  .edelyx-catalog-section {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6;
+  }
+
+  .edelyx-catalog-layout {
+    @apply grid grid-cols-1 lg:grid-cols-[265px_minmax(0,1fr)] gap-6 items-start;
+  }
+
+  /* ========================================================================
+     6. PANEL LATERAL DE FILTROS (Blueprint: Filtro.png)
+     ======================================================================== */
+  .edelyx-filter-panel {
+    @apply hidden lg:block bg-edelyx-card border border-edelyx-border rounded-xl p-4 space-y-5 lg:sticky lg:top-28;
+  }
+
+  .edelyx-filter-panel-open {
+    @apply block;
+  }
+
+  .edelyx-filter-group {
+    @apply space-y-2 pb-4 border-b border-edelyx-border/60 last:border-b-0 last:pb-0;
+  }
+
+  .edelyx-filter-heading {
+    @apply font-teko text-xl uppercase tracking-wider text-white leading-none mb-2 flex items-center justify-between;
+  }
+
+  .edelyx-filter-check-row {
+    @apply flex items-start gap-2.5 cursor-pointer select-none p-1.5 rounded-lg hover:bg-edelyx-surface/50 transition-colors;
+  }
+
+  .edelyx-filter-checkbox {
+    @apply mt-0.5 w-4 h-4 accent-edelyx-accent rounded border-edelyx-border bg-edelyx-bg cursor-pointer shrink-0;
+  }
+
+  .edelyx-filter-check-title {
+    @apply text-xs font-bold text-emerald-400 block;
+  }
+
+  .edelyx-filter-check-caption {
+    @apply font-eczar text-xs text-slate-300 leading-snug block mt-0.5;
+  }
+
+  .edelyx-filter-list {
+    @apply space-y-1;
+  }
+
+  .edelyx-filter-link {
+    @apply w-full text-left text-xs text-slate-300 hover:text-white hover:bg-edelyx-surface/70 border border-transparent px-2.5 py-1.5 rounded-md flex items-center justify-between transition-all duration-150 cursor-pointer;
+  }
+
+  .edelyx-filter-link-active {
+    @apply bg-edelyx-wine/75 text-white font-semibold border-edelyx-accent/80;
+  }
+
+  /* Histograma / Rango de Precios inspirado en Filtro.png */
+  .edelyx-price-current {
+    @apply font-eczar text-sm font-bold text-white block mb-2;
+  }
+
+  .edelyx-price-bars {
+    @apply flex items-end gap-1 h-8 px-1 mb-2.5 border-b border-edelyx-accent/60 pb-1;
+  }
+
+  .edelyx-price-bar {
+    @apply flex-1 bg-edelyx-rose/35 rounded-t-sm transition-colors;
+  }
+
+  .edelyx-price-bar-highlight {
+    @apply bg-edelyx-accent;
+  }
+
+  /* Filtro de Calificación por Estrellas */
+  .edelyx-stars-filter-btn {
+    @apply w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md border border-transparent text-xs text-slate-300 hover:text-white hover:bg-edelyx-surface/70 transition-colors cursor-pointer;
+  }
+
+  .edelyx-stars-filter-active {
+    @apply bg-edelyx-wine/75 text-white border-edelyx-accent/80 font-semibold;
+  }
+
+  .edelyx-stars-gold {
+    @apply text-edelyx-gold text-sm tracking-tight leading-none;
+  }
+
+  .edelyx-stars-muted {
+    @apply text-slate-600 text-sm tracking-tight leading-none;
+  }
+
+  .edelyx-clear-filters-btn {
+    @apply w-full font-teko text-base uppercase tracking-wider py-1.5 px-3 rounded-lg border border-edelyx-border hover:border-edelyx-accent text-edelyx-rose hover:text-white bg-edelyx-dark hover:bg-edelyx-wine/40 transition-colors cursor-pointer text-center;
+  }
+
+  /* ========================================================================
+     7. TARJETA DE PRODUCTO Y GRID (Blueprint: listado.png)
+     ======================================================================== */
+  .edelyx-catalog-header {
+    @apply flex flex-wrap items-baseline justify-between gap-2 mb-5;
+  }
+
+  .edelyx-catalog-title {
+    @apply font-teko text-3xl sm:text-4xl font-semibold uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-catalog-subtitle {
+    @apply font-eczar text-sm text-edelyx-rose;
+  }
+
+  .edelyx-product-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5;
+  }
+
+  .edelyx-card {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl overflow-hidden flex flex-col justify-between transition-all duration-200 hover:border-edelyx-accent hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-10px_rgba(0,0,0,0.85)];
+  }
+
+  /* Contenedor blanco/neutro para destacar producto + Wishlist en esquina */
+  .edelyx-card-image-wrapper {
+    @apply relative w-full h-56 bg-[#F7F8FA] flex items-center justify-center p-3 overflow-hidden border-b border-edelyx-border/60;
+  }
+
+  .edelyx-card-img {
+    @apply max-h-full max-w-full object-contain transition-transform duration-300;
+  }
+
+  .edelyx-card:hover .edelyx-card-img {
+    @apply scale-105;
+  }
+
+  .edelyx-wishlist-btn {
+    @apply absolute bottom-3 left-3 w-9 h-9 rounded-full bg-white/95 hover:bg-edelyx-accent text-slate-800 hover:text-white border border-slate-300 hover:border-edelyx-accent flex items-center justify-center shadow-md cursor-pointer transition-all duration-200;
+  }
+
+  .edelyx-wishlist-btn-active {
+    @apply bg-edelyx-accent text-white border-edelyx-accent;
+  }
+
+  .edelyx-stock-badge {
+    @apply absolute top-3 right-3 px-2 py-0.5 rounded bg-edelyx-wine/90 text-white text-[10px] font-bold uppercase tracking-wider;
+  }
+
+  .edelyx-card-body {
+    @apply p-4 flex-1 flex flex-col justify-between gap-3;
+  }
+
+  .edelyx-card-meta {
+    @apply flex items-center justify-between gap-2 mb-1;
+  }
+
+  .edelyx-badge-category {
+    @apply text-xs font-semibold uppercase tracking-wider text-edelyx-rose;
+  }
+
+  .edelyx-sku-label {
+    @apply text-[11px] text-slate-500;
+  }
+
+  .edelyx-product-name {
+    @apply font-teko text-[1.45rem] font-medium uppercase tracking-[0.03em] text-white leading-[1.08] line-clamp-2 transition-colors duration-200;
+  }
+
+  .edelyx-card:hover .edelyx-product-name {
+    @apply text-edelyx-accent;
+  }
+
+  .edelyx-product-desc {
+    @apply font-eczar text-[0.84rem] text-edelyx-muted leading-snug line-clamp-2 mt-1;
+  }
+
+  /* Calificación de estrellas doradas: 5.0 ★★★★★ (N) */
+  .edelyx-stars-rating {
+    @apply flex items-center gap-1.5 mt-2 text-xs;
+  }
+
+  .edelyx-rating-score {
+    @apply font-eczar font-semibold text-slate-200;
+  }
+
+  .edelyx-rating-stars {
+    @apply text-edelyx-gold text-sm tracking-tight leading-none;
+  }
+
+  .edelyx-rating-count {
+    @apply text-edelyx-rose;
+  }
+
+  /* Desglose de Precio en Eczar ($2,848⁰²) */
+  .edelyx-price-block {
+    @apply mt-2 pt-2.5 border-t border-edelyx-border/50;
+  }
+
+  .edelyx-price-row {
+    @apply inline-flex items-start font-eczar text-white leading-none;
+  }
+
+  .edelyx-price-currency {
+    @apply text-sm font-semibold text-edelyx-rose mt-1 mr-0.5;
+  }
+
+  .edelyx-price-tag {
+    @apply font-eczar text-3xl font-bold tracking-tight text-white leading-none;
+  }
+
+  .edelyx-price-cents {
+    @apply text-xs font-bold text-slate-200 mt-1 ml-0.5;
+  }
+
+  .edelyx-installments-text {
+    @apply block font-eczar text-xs text-slate-400 mt-1;
+  }
+
+  /* Badge de Entrega GRATIS */
+  .edelyx-shipping-group {
+    @apply mt-2 space-y-1.5;
+  }
+
+  .edelyx-shipping-badge {
+    @apply text-xs text-slate-200 flex flex-wrap items-center gap-1.5;
+  }
+
+  .edelyx-shipping-free {
+    @apply font-bold text-emerald-400;
+  }
+
+  .edelyx-fulfillment-tag {
+    @apply inline-block text-[11px] bg-edelyx-surface border border-edelyx-border/80 text-edelyx-rose px-2 py-0.5 rounded;
+  }
+
+  /* Botones de Acción con Micro-animación */
+  .edelyx-card-cta {
+    @apply mt-3;
+  }
+
+  .edelyx-btn-primary {
+    @apply w-full bg-gradient-to-r from-edelyx-wine via-[#9E0028] to-edelyx-accent hover:from-edelyx-accent hover:via-[#D90D45] hover:to-edelyx-wine text-white font-teko text-xl uppercase tracking-wider py-2 px-4 rounded-full border border-edelyx-accent/50 shadow-[0_6px_18px_rgba(255,23,86,0.22)] hover:shadow-[0_8px_24px_rgba(255,23,86,0.42)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-45 disabled:pointer-events-none;
+  }
+
+  .edelyx-btn-added {
+    @apply from-emerald-700 via-emerald-600 to-emerald-500 border-emerald-400/60 shadow-[0_6px_18px_rgba(16,185,129,0.3)];
+  }
+
+  .edelyx-btn-outline {
+    @apply border border-edelyx-border hover:border-edelyx-accent text-slate-200 hover:text-white bg-edelyx-card hover:bg-edelyx-surface font-teko text-lg uppercase tracking-wider py-1.5 px-4 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:pointer-events-none;
+  }
+
+  /* ========================================================================
+     8. ESTADOS (Carga / Error / Vacío) Y PAGINADOR CENTRADO
+     ======================================================================== */
+  .edelyx-state-box {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl p-12 text-center my-4;
+  }
+
+  .edelyx-state-icon {
+    @apply text-4xl text-edelyx-rose mb-3 inline-block;
+  }
+
+  .edelyx-spinner {
+    @apply text-4xl text-edelyx-accent animate-spin mb-3 inline-block;
+  }
+
+  .edelyx-state-title {
+    @apply font-teko text-2xl uppercase tracking-wider text-white block;
+  }
+
+  .edelyx-state-desc {
+    @apply font-eczar text-sm text-edelyx-muted mt-1 block;
+  }
+
+  .edelyx-error-banner {
+    @apply bg-edelyx-wine-dark/70 border border-edelyx-accent/70 text-slate-100 rounded-xl p-5 text-center my-4 flex flex-col sm:flex-row items-center justify-center gap-3;
+  }
+
+  /* Paginador estilo Amazon (listado.png) */
+  .edelyx-pagination {
+    @apply mt-10 pt-4 flex justify-center;
+  }
+
+  .edelyx-pagination-bar {
+    @apply inline-flex items-center bg-edelyx-card border border-edelyx-border rounded-xl overflow-hidden shadow-lg;
+  }
+
+  .edelyx-page-nav-btn {
+    @apply px-4 py-2 font-teko text-lg uppercase tracking-wider text-slate-200 hover:text-white hover:bg-edelyx-surface flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-40 disabled:pointer-events-none;
+  }
+
+  .edelyx-page-indicator {
+    @apply px-4 py-2 font-eczar text-xs sm:text-sm text-slate-200 border-x border-edelyx-border/70 bg-edelyx-dark;
+  }
+
+  .edelyx-page-num-btn {
+    @apply min-w-[2.5rem] py-2 px-3 font-eczar text-sm font-semibold text-slate-300 hover:text-white hover:bg-edelyx-surface border-l border-edelyx-border/60 transition-colors cursor-pointer;
+  }
+
+  .edelyx-page-num-active {
+    @apply bg-edelyx-wine text-white border-x border-edelyx-accent font-bold;
+  }
+
+  /* ========================================================================
+     9. DRAWER LATERAL DEL CARRITO (.edelyx-drawer-*)
+     ======================================================================== */
+  .edelyx-drawer-root {
+    @apply fixed inset-0 z-[70] pointer-events-none invisible;
+  }
+
+  .edelyx-drawer-root-open {
+    @apply pointer-events-auto visible;
+  }
+
+  .edelyx-drawer-backdrop {
+    @apply fixed inset-0 bg-black/75 backdrop-blur-sm opacity-0 cursor-pointer;
+  }
+
+  .edelyx-drawer-panel {
+    @apply fixed top-0 right-0 h-full w-full max-w-[440px] bg-edelyx-bg border-l border-edelyx-border shadow-[-24px_0_60px_rgba(0,0,0,0.88)] flex flex-col z-10;
+  }
+
+  /* Cabecera del Drawer */
+  .edelyx-drawer-header {
+    @apply px-6 py-4 bg-edelyx-dark border-b border-edelyx-border/80 flex items-center justify-between gap-3 shrink-0;
+  }
+
+  .edelyx-drawer-title-group {
+    @apply flex items-center gap-3;
+  }
+
+  .edelyx-drawer-title {
+    @apply font-teko text-3xl font-semibold uppercase tracking-wider text-white leading-none pt-0.5;
+  }
+
+  .edelyx-drawer-count-badge {
+    @apply px-2.5 py-0.5 rounded-full bg-edelyx-wine border border-edelyx-accent/60 font-eczar text-xs font-bold text-white tabular-nums;
+  }
+
+  .edelyx-drawer-close-btn {
+    @apply w-9 h-9 rounded-lg bg-edelyx-card hover:bg-edelyx-wine border border-edelyx-border hover:border-edelyx-accent text-slate-200 hover:text-white flex items-center justify-center cursor-pointer transition-colors duration-150;
+  }
+
+  /* Aviso de límite de stock */
+  .edelyx-drawer-stock-alert {
+    @apply mx-6 mt-4 px-3.5 py-2.5 rounded-lg bg-edelyx-wine-dark/90 border border-edelyx-accent/70 text-xs font-eczar text-slate-100 flex items-center gap-2 shrink-0;
+  }
+
+  .edelyx-drawer-stock-alert-icon {
+    @apply text-edelyx-accent text-sm shrink-0;
+  }
+
+  /* Cuerpo desplazable de artículos */
+  .edelyx-drawer-body {
+    @apply flex-1 overflow-y-auto px-6 py-5;
+  }
+
+  .edelyx-drawer-list {
+    @apply space-y-3.5;
+  }
+
+  .edelyx-drawer-item {
+    @apply bg-edelyx-card border border-edelyx-border/80 hover:border-edelyx-rose/60 rounded-xl p-3.5 flex gap-3.5 transition-colors duration-150;
+  }
+
+  .edelyx-drawer-thumb-box {
+    @apply w-20 h-20 rounded-lg bg-[#F7F8FA] border border-edelyx-border/60 p-1.5 flex items-center justify-center shrink-0 overflow-hidden;
+  }
+
+  .edelyx-drawer-thumb-img {
+    @apply max-w-full max-h-full object-contain;
+  }
+
+  .edelyx-drawer-item-info {
+    @apply flex-1 min-w-0 flex flex-col justify-between gap-2;
+  }
+
+  .edelyx-drawer-item-top {
+    @apply flex items-start justify-between gap-2;
+  }
+
+  .edelyx-drawer-item-name {
+    @apply font-teko text-xl font-medium uppercase tracking-[0.03em] text-white leading-[1.08] line-clamp-2;
+  }
+
+  .edelyx-drawer-remove-btn {
+    @apply w-8 h-8 rounded-lg bg-edelyx-dark hover:bg-edelyx-wine text-edelyx-rose hover:text-white border border-transparent hover:border-edelyx-accent/70 flex items-center justify-center shrink-0 cursor-pointer transition-colors duration-150;
+  }
+
+  .edelyx-drawer-item-meta {
+    @apply flex flex-wrap items-center justify-between gap-2;
+  }
+
+  .edelyx-drawer-unit-price {
+    @apply font-eczar text-xs text-edelyx-muted tabular-nums;
+  }
+
+  .edelyx-drawer-stock-tag {
+    @apply text-[11px] font-eczar text-edelyx-rose tabular-nums;
+  }
+
+  .edelyx-drawer-stock-max {
+    @apply text-edelyx-accent font-semibold;
+  }
+
+  /* Controles de cantidad y subtotal por artículo */
+  .edelyx-drawer-item-bottom {
+    @apply pt-2 border-t border-edelyx-border/50 flex items-center justify-between gap-2;
+  }
+
+  .edelyx-drawer-qty-control {
+    @apply inline-flex items-center bg-edelyx-dark border border-edelyx-border rounded-lg overflow-hidden;
+  }
+
+  .edelyx-drawer-qty-btn {
+    @apply w-8 h-8 flex items-center justify-center text-slate-200 hover:text-white hover:bg-edelyx-wine/80 text-xs cursor-pointer transition-colors duration-150 disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-transparent;
+  }
+
+  .edelyx-drawer-qty-value {
+    @apply min-w-[2.25rem] px-2 text-center font-eczar text-sm font-bold text-white tabular-nums select-none border-x border-edelyx-border/60;
+  }
+
+  .edelyx-drawer-subtotal-group {
+    @apply text-right leading-none;
+  }
+
+  .edelyx-drawer-subtotal-label {
+    @apply block text-[10px] uppercase tracking-wider text-edelyx-rose mb-0.5;
+  }
+
+  .edelyx-drawer-subtotal-value {
+    @apply font-eczar text-base font-bold text-white tabular-nums;
+  }
+
+  /* Estado Vacío del Carrito */
+  .edelyx-drawer-empty {
+    @apply h-full min-h-[340px] flex flex-col items-center justify-center text-center px-4 py-10;
+  }
+
+  .edelyx-drawer-empty-badge {
+    @apply w-20 h-20 rounded-2xl bg-edelyx-card border border-edelyx-border flex items-center justify-center text-3xl text-edelyx-rose mb-5;
+  }
+
+  .edelyx-drawer-empty-title {
+    @apply font-teko text-3xl uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-drawer-empty-desc {
+    @apply font-eczar text-sm text-edelyx-muted max-w-[290px] leading-relaxed mt-2 mb-6;
+  }
+
+  .edelyx-drawer-explore-btn {
+    @apply bg-edelyx-wine hover:bg-edelyx-accent text-white font-teko text-xl uppercase tracking-wider px-7 py-2.5 rounded-full border border-edelyx-accent/60 transition-colors duration-200 flex items-center gap-2 cursor-pointer;
+  }
+
+  /* Pie Financiero y Acciones del Drawer */
+  .edelyx-drawer-footer {
+    @apply px-6 py-5 bg-edelyx-dark border-t border-edelyx-border shrink-0 space-y-4;
+  }
+
+  .edelyx-drawer-summary {
+    @apply space-y-2;
+  }
+
+  .edelyx-drawer-summary-row {
+    @apply flex items-center justify-between text-sm font-eczar;
+  }
+
+  .edelyx-drawer-summary-label {
+    @apply text-edelyx-muted;
+  }
+
+  .edelyx-drawer-summary-value {
+    @apply text-slate-100 font-semibold tabular-nums;
+  }
+
+  .edelyx-drawer-shipping-free {
+    @apply font-bold text-emerald-400 tracking-wide;
+  }
+
+  .edelyx-drawer-total-row {
+    @apply pt-3 mt-2 border-t border-edelyx-border/80 flex items-baseline justify-between gap-3;
+  }
+
+  .edelyx-drawer-total-label {
+    @apply font-teko text-2xl uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-drawer-total-note {
+    @apply block font-eczar text-[11px] text-edelyx-rose mt-0.5;
+  }
+
+  .edelyx-drawer-total-price {
+    @apply inline-flex items-start font-eczar text-white leading-none tabular-nums;
+  }
+
+  .edelyx-drawer-total-currency {
+    @apply text-sm font-semibold text-edelyx-rose mt-1 mr-0.5;
+  }
+
+  .edelyx-drawer-total-integer {
+    @apply text-3xl font-bold tracking-tight text-white leading-none;
+  }
+
+  .edelyx-drawer-total-cents {
+    @apply text-xs font-bold text-slate-200 mt-0.5 ml-0.5;
+  }
+
+  .edelyx-drawer-actions {
+    @apply space-y-2.5 pt-1;
+  }
+
+  .edelyx-drawer-clear-btn {
+    @apply w-full py-2 px-4 rounded-xl border border-edelyx-border hover:border-edelyx-accent/80 bg-edelyx-card hover:bg-edelyx-wine-dark/70 text-edelyx-rose hover:text-white font-teko text-lg uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-colors duration-150;
+  }
+
+  /* ========================================================================
+     10. CHECKOUT REACTIVO (.edelyx-checkout-*)
+     ======================================================================== */
+  .edelyx-checkout-section {
+    @apply max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10;
+  }
+
+  .edelyx-checkout-header {
+    @apply flex flex-wrap items-baseline justify-between gap-3 pb-5 mb-7 border-b border-edelyx-border/70;
+  }
+
+  .edelyx-checkout-title {
+    @apply font-teko text-4xl sm:text-5xl font-semibold uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-checkout-subtitle {
+    @apply font-eczar text-sm text-edelyx-muted mt-1 block;
+  }
+
+  .edelyx-checkout-back-link {
+    @apply font-teko text-lg uppercase tracking-wider text-edelyx-rose hover:text-white flex items-center gap-2 cursor-pointer no-underline transition-colors duration-150;
+  }
+
+  .edelyx-checkout-grid {
+    @apply grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-7 items-start;
+  }
+
+  .edelyx-checkout-panel {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl p-6 sm:p-7 space-y-6;
+  }
+
+  .edelyx-checkout-panel-title {
+    @apply font-teko text-2xl sm:text-3xl font-medium uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-checkout-panel-desc {
+    @apply font-eczar text-sm text-edelyx-muted leading-relaxed mt-1.5;
+  }
+
+  .edelyx-checkout-form {
+    @apply space-y-5;
+  }
+
+  .edelyx-checkout-field {
+    @apply space-y-2;
+  }
+
+  .edelyx-checkout-label {
+    @apply block text-sm font-medium text-slate-200;
+  }
+
+  .edelyx-checkout-required {
+    @apply text-edelyx-accent ml-0.5;
+  }
+
+  .edelyx-checkout-input-wrap {
+    @apply relative flex items-center;
+  }
+
+  .edelyx-checkout-input-icon {
+    @apply absolute left-3.5 text-edelyx-rose text-sm pointer-events-none;
+  }
+
+  .edelyx-checkout-input {
+    @apply w-full bg-edelyx-bg border border-edelyx-border focus:border-edelyx-accent focus:ring-2 focus:ring-edelyx-accent/25 rounded-lg pl-10 pr-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none transition-colors duration-150;
+  }
+
+  .edelyx-checkout-input-invalid {
+    @apply border-edelyx-accent ring-1 ring-edelyx-accent/40;
+  }
+
+  .edelyx-checkout-hint {
+    @apply block font-eczar text-xs text-edelyx-muted leading-relaxed;
+  }
+
+  .edelyx-checkout-error-text {
+    @apply block text-xs font-medium text-[#FF6B8E] mt-1;
+  }
+
+  .edelyx-checkout-alert {
+    @apply px-4 py-3.5 rounded-lg bg-edelyx-wine-dark/90 border border-edelyx-accent/80 text-sm font-eczar text-slate-100 flex items-start gap-3;
+  }
+
+  .edelyx-checkout-alert-icon {
+    @apply text-edelyx-accent text-base mt-0.5 shrink-0;
+  }
+
+  .edelyx-checkout-trust-box {
+    @apply bg-edelyx-dark border border-edelyx-border/80 rounded-xl p-4 space-y-2.5;
+  }
+
+  .edelyx-checkout-trust-row {
+    @apply flex items-start gap-2.5 text-xs font-eczar text-slate-200 leading-relaxed;
+  }
+
+  .edelyx-checkout-trust-icon {
+    @apply text-emerald-400 text-sm mt-0.5 shrink-0;
+  }
+
+  .edelyx-checkout-submit-btn {
+    @apply w-full bg-edelyx-accent hover:bg-edelyx-accent-hover active:bg-edelyx-wine text-white font-teko text-2xl uppercase tracking-wider py-3 px-6 rounded-xl border border-edelyx-accent/70 flex items-center justify-center gap-2.5 cursor-pointer transition-colors duration-150 disabled:opacity-45 disabled:cursor-not-allowed;
+  }
+
+  /* Resumen Congelado del Pedido */
+  .edelyx-checkout-summary {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl p-6 lg:sticky lg:top-28 space-y-5;
+  }
+
+  .edelyx-checkout-summary-head {
+    @apply flex items-center justify-between gap-2 pb-3.5 border-b border-edelyx-border/70;
+  }
+
+  .edelyx-checkout-summary-title {
+    @apply font-teko text-2xl font-medium uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-checkout-edit-btn {
+    @apply font-teko text-base uppercase tracking-wider text-edelyx-rose hover:text-white bg-transparent border-0 cursor-pointer transition-colors;
+  }
+
+  .edelyx-checkout-items {
+    @apply space-y-3 max-h-[340px] overflow-y-auto pr-1;
+  }
+
+  .edelyx-checkout-item {
+    @apply flex items-center gap-3 pb-3 border-b border-edelyx-border/40 last:border-b-0 last:pb-0;
+  }
+
+  .edelyx-checkout-item-thumb {
+    @apply w-14 h-14 rounded-lg bg-[#F7F8FA] border border-edelyx-border/60 p-1 flex items-center justify-center shrink-0 overflow-hidden;
+  }
+
+  .edelyx-checkout-item-img {
+    @apply max-w-full max-h-full object-contain;
+  }
+
+  .edelyx-checkout-item-body {
+    @apply flex-1 min-w-0;
+  }
+
+  .edelyx-checkout-item-name {
+    @apply font-teko text-lg uppercase tracking-wide text-white leading-tight line-clamp-1;
+  }
+
+  .edelyx-checkout-item-meta {
+    @apply font-eczar text-xs text-edelyx-muted tabular-nums block mt-0.5;
+  }
+
+  .edelyx-checkout-item-subtotal {
+    @apply font-eczar text-sm font-bold text-white tabular-nums shrink-0;
+  }
+
+  .edelyx-checkout-totals {
+    @apply pt-3.5 border-t border-edelyx-border/80 space-y-2;
+  }
+
+  .edelyx-checkout-total-line {
+    @apply flex items-center justify-between text-sm font-eczar;
+  }
+
+  .edelyx-checkout-total-muted {
+    @apply text-edelyx-muted;
+  }
+
+  .edelyx-checkout-total-val {
+    @apply text-slate-100 font-semibold tabular-nums;
+  }
+
+  .edelyx-checkout-grand-row {
+    @apply pt-3 mt-2 border-t border-edelyx-border flex items-baseline justify-between gap-2;
+  }
+
+  .edelyx-checkout-grand-label {
+    @apply font-teko text-2xl uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-checkout-grand-amount {
+    @apply font-eczar text-3xl font-bold text-white tabular-nums leading-none;
+  }
+
+  .edelyx-checkout-empty {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl p-12 text-center max-w-xl mx-auto my-6 space-y-4;
+  }
+
+  /* ========================================================================
+     11. RASTREO Y RECIBO DIGITAL DE ÓRDENES (.edelyx-order-*)
+     ======================================================================== */
+  .edelyx-order-section {
+    @apply max-w-[1040px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-7;
+  }
+
+  .edelyx-order-header {
+    @apply flex flex-wrap items-end justify-between gap-4;
+  }
+
+  .edelyx-order-title {
+    @apply font-teko text-4xl sm:text-5xl font-semibold uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-order-subtitle {
+    @apply font-eczar text-sm text-edelyx-muted mt-1 block;
+  }
+
+  /* Buscador de Folio (ORD-XXXXXXXX) */
+  .edelyx-order-search-card {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl p-5 sm:p-6;
+  }
+
+  .edelyx-order-search-form {
+    @apply flex flex-col sm:flex-row items-stretch sm:items-end gap-3.5;
+  }
+
+  .edelyx-order-search-field {
+    @apply flex-1 space-y-1.5;
+  }
+
+  .edelyx-order-search-label {
+    @apply block text-xs font-medium text-slate-300;
+  }
+
+  .edelyx-order-search-input-wrap {
+    @apply relative flex items-center;
+  }
+
+  .edelyx-order-search-icon {
+    @apply absolute left-3.5 text-edelyx-rose text-sm pointer-events-none;
+  }
+
+  .edelyx-order-search-input {
+    @apply w-full bg-edelyx-bg border border-edelyx-border focus:border-edelyx-accent focus:ring-2 focus:ring-edelyx-accent/25 rounded-lg pl-10 pr-4 py-2.5 font-mono text-sm uppercase tracking-wider text-white placeholder:text-slate-500 outline-none transition-colors;
+  }
+
+  .edelyx-order-search-btn {
+    @apply bg-edelyx-accent hover:bg-edelyx-accent-hover active:bg-edelyx-wine text-white font-teko text-xl uppercase tracking-wider px-7 py-2.5 rounded-lg border border-edelyx-accent/70 flex items-center justify-center gap-2 cursor-pointer transition-colors shrink-0 disabled:opacity-45 disabled:cursor-not-allowed;
+  }
+
+  /* Artefacto: Recibo Digital EDELYX */
+  .edelyx-order-receipt {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl overflow-hidden;
+  }
+
+  .edelyx-order-receipt-top {
+    @apply bg-edelyx-dark px-6 py-5 border-b border-edelyx-border flex flex-wrap items-start justify-between gap-4;
+  }
+
+  .edelyx-order-folio-group {
+    @apply space-y-1;
+  }
+
+  .edelyx-order-folio-caption {
+    @apply block font-eczar text-xs text-edelyx-rose;
+  }
+
+  .edelyx-order-folio-row {
+    @apply flex flex-wrap items-center gap-2.5;
+  }
+
+  .edelyx-order-folio-code {
+    @apply font-mono text-xl sm:text-2xl font-bold tracking-wider text-white;
+  }
+
+  .edelyx-order-copy-btn {
+    @apply px-2.5 py-1 rounded-md bg-edelyx-card hover:bg-edelyx-surface border border-edelyx-border hover:border-edelyx-accent text-xs text-slate-200 hover:text-white inline-flex items-center gap-1.5 cursor-pointer transition-colors;
+  }
+
+  /* Badges semánticos de OrderStatus (alto contraste >= 4.5:1) */
+  .edelyx-order-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide whitespace-nowrap border;
+  }
+
+  .edelyx-order-badge-created {
+    @apply bg-[#10243E] text-[#7CC4FA] border-[#26598E];
+  }
+
+  .edelyx-order-badge-confirmed {
+    @apply bg-[#29200C] text-[#FCD34D] border-[#855E14];
+  }
+
+  .edelyx-order-badge-shipped {
+    @apply bg-[#0F2937] text-[#5EEAD4] border-[#1F6A73];
+  }
+
+  .edelyx-order-badge-completed {
+    @apply bg-[#0F2A1D] text-[#6EE7B7] border-[#1D6B48];
+  }
+
+  .edelyx-order-badge-cancelled {
+    @apply bg-[#2E1219] text-[#FDA4AF] border-[#881D37];
+  }
+
+  /* Metadatos y Línea de Progreso del Pedido */
+  .edelyx-order-meta-grid {
+    @apply px-6 py-4 bg-edelyx-bg/60 border-b border-edelyx-border/70 grid grid-cols-1 sm:grid-cols-3 gap-4;
+  }
+
+  .edelyx-order-meta-cell {
+    @apply space-y-0.5;
+  }
+
+  .edelyx-order-meta-label {
+    @apply block text-xs text-edelyx-muted;
+  }
+
+  .edelyx-order-meta-value {
+    @apply block font-eczar text-sm font-semibold text-white break-all tabular-nums;
+  }
+
+  .edelyx-order-steps {
+    @apply px-6 py-4 border-b border-edelyx-border/60 grid grid-cols-2 sm:grid-cols-4 gap-2.5;
+  }
+
+  .edelyx-order-step {
+    @apply px-3 py-2 rounded-lg bg-edelyx-bg border border-edelyx-border/50 text-xs text-slate-400 flex items-center gap-2;
+  }
+
+  .edelyx-order-step-active {
+    @apply bg-edelyx-surface border-edelyx-accent/70 text-white font-semibold;
+  }
+
+  .edelyx-order-step-done {
+    @apply bg-[#0F2A1D]/70 border-emerald-600/60 text-emerald-300;
+  }
+
+  .edelyx-order-cancelled-strip {
+    @apply px-6 py-3.5 bg-[#2E1219] border-b border-[#881D37] text-xs sm:text-sm font-eczar text-[#FECDD3] flex items-center gap-2.5;
+  }
+
+  /* Tabla de Conceptos con Snapshot Histórico */
+  .edelyx-order-table-wrap {
+    @apply overflow-x-auto px-6 py-5;
+  }
+
+  .edelyx-order-table {
+    @apply w-full border-collapse text-left;
+  }
+
+  .edelyx-order-th {
+    @apply pb-3 text-xs font-medium text-edelyx-muted border-b border-edelyx-border/80;
+  }
+
+  .edelyx-order-th-num {
+    @apply pb-3 text-xs font-medium text-edelyx-muted border-b border-edelyx-border/80 text-right;
+  }
+
+  .edelyx-order-tr {
+    @apply border-b border-edelyx-border/40 last:border-b-0;
+  }
+
+  .edelyx-order-td {
+    @apply py-3.5 pr-4 text-sm text-slate-100;
+  }
+
+  .edelyx-order-td-name {
+    @apply font-teko text-xl uppercase tracking-wide text-white leading-tight block;
+  }
+
+  .edelyx-order-td-id {
+    @apply font-mono text-[11px] text-edelyx-rose;
+  }
+
+  .edelyx-order-td-num {
+    @apply py-3.5 pl-4 font-eczar text-sm text-slate-100 text-right tabular-nums whitespace-nowrap;
+  }
+
+  .edelyx-order-td-subtotal {
+    @apply py-3.5 pl-4 font-eczar text-sm font-bold text-white text-right tabular-nums whitespace-nowrap;
+  }
+
+  /* Pie del Recibo: Totales y Botón Cancelar Orden */
+  .edelyx-order-receipt-footer {
+    @apply bg-edelyx-dark px-6 py-5 border-t border-edelyx-border flex flex-col md:flex-row items-stretch md:items-center justify-between gap-5;
+  }
+
+  .edelyx-order-cancel-zone {
+    @apply flex flex-col sm:flex-row sm:items-center gap-3;
+  }
+
+  .edelyx-order-cancel-btn {
+    @apply px-5 py-2 rounded-lg border border-[#A62646] bg-[#2E1219] hover:bg-edelyx-wine text-[#FECDD3] hover:text-white font-teko text-lg uppercase tracking-wider inline-flex items-center justify-center gap-2 cursor-pointer transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#2E1219] disabled:hover:text-[#FECDD3];
+  }
+
+  .edelyx-order-cancel-confirm {
+    @apply flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-[#2E1219] border border-edelyx-accent/80;
+  }
+
+  .edelyx-order-cancel-confirm-text {
+    @apply text-xs font-eczar text-white mr-1;
+  }
+
+  .edelyx-order-cancel-yes {
+    @apply px-3 py-1 rounded-md bg-edelyx-accent hover:bg-edelyx-accent-hover text-white font-teko text-base uppercase tracking-wider cursor-pointer transition-colors disabled:opacity-45;
+  }
+
+  .edelyx-order-cancel-no {
+    @apply px-3 py-1 rounded-md bg-edelyx-card hover:bg-edelyx-surface border border-edelyx-border text-slate-200 font-teko text-base uppercase tracking-wider cursor-pointer transition-colors;
+  }
+
+  .edelyx-order-cancel-note {
+    @apply font-eczar text-xs text-edelyx-muted max-w-sm leading-snug;
+  }
+
+  .edelyx-order-totals-box {
+    @apply min-w-[250px] space-y-1.5;
+  }
+
+  .edelyx-order-total-row {
+    @apply flex items-center justify-between text-xs font-eczar text-edelyx-muted;
+  }
+
+  .edelyx-order-grand-row {
+    @apply pt-2 border-t border-edelyx-border/80 flex items-baseline justify-between gap-4;
+  }
+
+  .edelyx-order-grand-label {
+    @apply font-teko text-2xl uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-order-grand-value {
+    @apply font-eczar text-2xl sm:text-3xl font-bold text-white tabular-nums leading-none;
+  }
+
+  .edelyx-order-feedback {
+    @apply px-4 py-3 rounded-lg bg-[#0F2A1D] border border-[#1D6B48] text-xs sm:text-sm font-eczar text-[#A7F3D0] flex items-center gap-2.5;
+  }
+
+  /* ========================================================================
+     12. PANEL ADMINISTRATIVO CRUD (.edelyx-admin-*)
+     Directrices app-screens.md: KPIs divididos sin iconos decorativos,
+     tablas con reglas 1px sin zebra, cifras tabular-nums a la derecha.
+     ======================================================================== */
+  .edelyx-admin-section {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-6;
+  }
+
+  .edelyx-admin-header {
+    @apply flex flex-wrap items-center justify-between gap-4;
+  }
+
+  .edelyx-admin-title {
+    @apply font-teko text-3xl sm:text-4xl font-semibold uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-admin-subtitle {
+    @apply font-eczar text-xs sm:text-sm text-edelyx-muted mt-1 block;
+  }
+
+  .edelyx-admin-header-actions {
+    @apply flex items-center gap-3;
+  }
+
+  .edelyx-admin-stamp {
+    @apply font-eczar text-xs text-edelyx-muted tabular-nums hidden sm:inline;
+  }
+
+  .edelyx-admin-refresh-btn {
+    @apply px-3.5 py-1.5 rounded-lg bg-edelyx-card hover:bg-edelyx-surface border border-edelyx-border hover:border-edelyx-accent text-xs font-medium text-slate-200 hover:text-white inline-flex items-center gap-2 cursor-pointer transition-colors;
+  }
+
+  /* Franja KPI Dividida (1px rules, sin iconos en círculos) */
+  .edelyx-admin-kpi-strip {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 sm:divide-x divide-edelyx-border/70;
+  }
+
+  .edelyx-admin-kpi-cell {
+    @apply px-5 py-4 space-y-1;
+  }
+
+  .edelyx-admin-kpi-label {
+    @apply block text-xs text-edelyx-muted;
+  }
+
+  .edelyx-admin-kpi-value {
+    @apply block font-eczar text-2xl font-semibold text-white tabular-nums leading-tight;
+  }
+
+  .edelyx-admin-kpi-value-alert {
+    @apply text-[#FDA4AF];
+  }
+
+  /* Tabs subrayados de 1px */
+  .edelyx-admin-tabs {
+    @apply flex items-center gap-6 border-b border-edelyx-border/80;
+  }
+
+  .edelyx-admin-tab {
+    @apply pb-3 px-1 -mb-px border-b-2 border-transparent font-teko text-2xl uppercase tracking-wider text-slate-400 hover:text-slate-100 inline-flex items-center gap-2 cursor-pointer transition-colors;
+  }
+
+  .edelyx-admin-tab-active {
+    @apply border-edelyx-accent text-white;
+  }
+
+  .edelyx-admin-tab-count {
+    @apply px-2 py-0.5 rounded bg-edelyx-card border border-edelyx-border/80 font-eczar text-xs text-slate-200 tabular-nums;
+  }
+
+  /* Banners de estado CRUD */
+  .edelyx-admin-banner-ok {
+    @apply px-4 py-3 rounded-lg bg-[#0F2A1D] border border-[#1D6B48] text-xs sm:text-sm font-eczar text-[#A7F3D0] flex items-center justify-between gap-3;
+  }
+
+  .edelyx-admin-banner-err {
+    @apply px-4 py-3 rounded-lg bg-[#2E1219] border border-[#881D37] text-xs sm:text-sm font-eczar text-[#FECDD3] flex items-center justify-between gap-3;
+  }
+
+  .edelyx-admin-banner-close {
+    @apply text-slate-300 hover:text-white cursor-pointer px-1;
+  }
+
+  /* Layout CRUD a 2 Columnas (Formulario + Tabla) */
+  .edelyx-admin-workspace {
+    @apply grid grid-cols-1 xl:grid-cols-[400px_minmax(0,1fr)] gap-6 items-start;
+  }
+
+  .edelyx-admin-form-card {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl p-5 sm:p-6 space-y-5 xl:sticky xl:top-28;
+  }
+
+  .edelyx-admin-form-head {
+    @apply flex items-center justify-between gap-2 pb-3 border-b border-edelyx-border/70;
+  }
+
+  .edelyx-admin-form-title {
+    @apply font-teko text-2xl font-medium uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-admin-mode-pill {
+    @apply px-2.5 py-0.5 rounded text-[11px] font-semibold bg-edelyx-surface border border-edelyx-border text-edelyx-rose;
+  }
+
+  .edelyx-admin-mode-pill-edit {
+    @apply bg-[#29200C] border-[#855E14] text-[#FCD34D];
+  }
+
+  .edelyx-admin-form {
+    @apply space-y-4;
+  }
+
+  .edelyx-admin-row-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-3.5;
+  }
+
+  .edelyx-admin-field {
+    @apply space-y-1.5;
+  }
+
+  .edelyx-admin-label {
+    @apply block text-xs font-medium text-slate-200;
+  }
+
+  .edelyx-admin-input,
+  .edelyx-admin-select,
+  .edelyx-admin-textarea {
+    @apply w-full bg-edelyx-bg border border-edelyx-border focus:border-edelyx-accent focus:ring-2 focus:ring-edelyx-accent/25 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none transition-colors;
+  }
+
+  .edelyx-admin-select option {
+    @apply bg-edelyx-card text-slate-100;
+  }
+
+  .edelyx-admin-textarea {
+    @apply min-h-[78px] resize-y;
+  }
+
+  .edelyx-admin-input-invalid {
+    @apply border-edelyx-accent;
+  }
+
+  .edelyx-admin-field-error {
+    @apply block text-[11px] text-[#FF6B8E];
+  }
+
+  .edelyx-admin-preview-row {
+    @apply flex items-center gap-3 p-2.5 rounded-lg bg-edelyx-bg border border-edelyx-border/70;
+  }
+
+  .edelyx-admin-preview-box {
+    @apply w-12 h-12 rounded-md bg-[#F7F8FA] p-1 flex items-center justify-center shrink-0 overflow-hidden;
+  }
+
+  .edelyx-admin-preview-img {
+    @apply max-w-full max-h-full object-contain;
+  }
+
+  .edelyx-admin-preview-caption {
+    @apply font-eczar text-xs text-edelyx-muted truncate;
+  }
+
+  .edelyx-admin-form-actions {
+    @apply pt-2 flex items-center gap-2.5;
+  }
+
+  .edelyx-admin-save-btn {
+    @apply flex-1 bg-edelyx-accent hover:bg-edelyx-accent-hover active:bg-edelyx-wine text-white font-teko text-xl uppercase tracking-wider py-2.5 px-5 rounded-lg border border-edelyx-accent/70 inline-flex items-center justify-center gap-2 cursor-pointer transition-colors disabled:opacity-45 disabled:cursor-not-allowed;
+  }
+
+  .edelyx-admin-reset-btn {
+    @apply py-2.5 px-4 rounded-lg bg-edelyx-bg hover:bg-edelyx-surface border border-edelyx-border text-slate-200 hover:text-white font-teko text-lg uppercase tracking-wider cursor-pointer transition-colors;
+  }
+
+  /* Panel de Tabla Administrativa */
+  .edelyx-admin-table-card {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl overflow-hidden;
+  }
+
+  .edelyx-admin-toolbar {
+    @apply px-5 py-4 border-b border-edelyx-border/80 flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .edelyx-admin-toolbar-title {
+    @apply font-teko text-2xl uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-admin-search-wrap {
+    @apply relative flex items-center w-full sm:w-72;
+  }
+
+  .edelyx-admin-search-icon {
+    @apply absolute left-3 text-edelyx-rose text-xs pointer-events-none;
+  }
+
+  .edelyx-admin-search-input {
+    @apply w-full bg-edelyx-bg border border-edelyx-border focus:border-edelyx-accent rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-slate-500 outline-none transition-colors;
+  }
+
+  .edelyx-admin-table-scroll {
+    @apply overflow-x-auto;
+  }
+
+  .edelyx-admin-table {
+    @apply w-full border-collapse text-left;
+  }
+
+  .edelyx-admin-th {
+    @apply px-5 py-3 text-xs font-medium text-edelyx-muted border-b border-edelyx-border/80 whitespace-nowrap;
+  }
+
+  .edelyx-admin-th-num {
+    @apply px-5 py-3 text-xs font-medium text-edelyx-muted border-b border-edelyx-border/80 text-right whitespace-nowrap;
+  }
+
+  .edelyx-admin-tr {
+    @apply border-b border-edelyx-border/40 last:border-b-0 hover:bg-edelyx-surface/35 transition-colors;
+  }
+
+  .edelyx-admin-tr-editing {
+    @apply bg-edelyx-surface/70;
+  }
+
+  .edelyx-admin-td {
+    @apply px-5 py-3.5 text-sm text-slate-100 align-middle;
+  }
+
+  .edelyx-admin-td-num {
+    @apply px-5 py-3.5 font-eczar text-sm text-slate-100 text-right tabular-nums whitespace-nowrap align-middle;
+  }
+
+  .edelyx-admin-prod-cell {
+    @apply flex items-center gap-3 min-w-[230px];
+  }
+
+  .edelyx-admin-prod-thumb {
+    @apply w-11 h-11 rounded-md bg-[#F7F8FA] border border-edelyx-border/60 p-1 flex items-center justify-center shrink-0 overflow-hidden;
+  }
+
+  .edelyx-admin-prod-img {
+    @apply max-w-full max-h-full object-contain;
+  }
+
+  .edelyx-admin-prod-name {
+    @apply font-teko text-lg uppercase tracking-wide text-white leading-tight line-clamp-1 block;
+  }
+
+  .edelyx-admin-prod-sku {
+    @apply font-mono text-[11px] text-edelyx-rose block;
+  }
+
+  .edelyx-admin-cat-chip {
+    @apply inline-block px-2.5 py-0.5 rounded bg-edelyx-bg border border-edelyx-border/70 text-xs text-slate-200 whitespace-nowrap;
+  }
+
+  .edelyx-admin-stock-pill {
+    @apply inline-block px-2 py-0.5 rounded text-xs font-semibold tabular-nums whitespace-nowrap;
+  }
+
+  .edelyx-admin-stock-ok {
+    @apply bg-[#0F2A1D] text-[#6EE7B7];
+  }
+
+  .edelyx-admin-stock-low {
+    @apply bg-[#29200C] text-[#FCD34D];
+  }
+
+  .edelyx-admin-stock-zero {
+    @apply bg-[#2E1219] text-[#FDA4AF];
+  }
+
+  .edelyx-admin-actions-cell {
+    @apply flex items-center justify-end gap-1.5;
+  }
+
+  .edelyx-admin-icon-btn {
+    @apply px-2.5 py-1.5 rounded-md bg-edelyx-bg hover:bg-edelyx-surface border border-edelyx-border/80 hover:border-edelyx-accent text-xs text-slate-200 hover:text-white inline-flex items-center gap-1 cursor-pointer transition-colors whitespace-nowrap;
+  }
+
+  .edelyx-admin-delete-btn {
+    @apply px-2.5 py-1.5 rounded-md bg-edelyx-bg hover:bg-[#2E1219] border border-edelyx-border/80 hover:border-[#A62646] text-xs text-edelyx-rose hover:text-[#FECDD3] inline-flex items-center gap-1 cursor-pointer transition-colors whitespace-nowrap;
+  }
+
+  .edelyx-admin-confirm-inline {
+    @apply inline-flex items-center gap-1.5;
+  }
+
+  .edelyx-admin-confirm-yes {
+    @apply px-2.5 py-1 rounded bg-edelyx-accent hover:bg-edelyx-accent-hover text-white text-xs font-semibold cursor-pointer transition-colors disabled:opacity-45;
+  }
+
+  .edelyx-admin-confirm-no {
+    @apply px-2 py-1 rounded bg-edelyx-bg border border-edelyx-border text-xs text-slate-300 hover:text-white cursor-pointer transition-colors;
+  }
+
+  .edelyx-admin-pager {
+    @apply px-5 py-3.5 bg-edelyx-dark border-t border-edelyx-border/80 flex flex-wrap items-center justify-between gap-3 text-xs font-eczar text-edelyx-muted;
+  }
+
+  .edelyx-admin-pager-controls {
+    @apply flex items-center gap-2;
+  }
+
+  .edelyx-admin-empty-row {
+    @apply px-6 py-10 text-center font-eczar text-sm text-edelyx-muted;
+  }
+}

@@ -1,0 +1,372 @@
+<!-- Barra Superior de Resultados y Ordenamiento (Blueprint: ORDENAR) -->
+<div class="edelyx-results-bar">
+  <div class="edelyx-results-bar-inner">
+    <div class="edelyx-results-summary">
+      <span>Mostrando</span>
+      <span class="edelyx-results-highlight">{{ products().length }}</span>
+      <span>de</span>
+      <span class="edelyx-results-highlight">{{
+        selectedCategoryId() ? products().length : totalElements()
+      }}</span>
+      <span>productos en</span>
+      <span class="edelyx-results-highlight">{{ activeCategoryName() }}</span>
+      @if (searchQuery()) {
+        <span>para "{{ searchQuery() }}"</span>
+      }
+    </div>
+
+    <div class="edelyx-sort-group">
+      <button
+        type="button"
+        (click)="toggleMobileFilters()"
+        [class.edelyx-mobile-filter-active]="showMobileFilters()"
+        class="edelyx-mobile-filter-btn"
+      >
+        <i class="pi pi-sliders-h"></i>
+        <span>Filtros</span>
+      </button>
+
+      <div class="edelyx-sort-control">
+        <label for="catalog-sort" class="edelyx-sort-label">Ordenar por:</label>
+        <select
+          id="catalog-sort"
+          [ngModel]="sortBy()"
+          (ngModelChange)="setSortBy($event)"
+          class="edelyx-sort-select"
+        >
+          <option value="FEATURED">Destacados</option>
+          <option value="PRICE_ASC">Precio: de menor a mayor</option>
+          <option value="PRICE_DESC">Precio: de mayor a menor</option>
+          <option value="RATING_DESC">Promedio Opinión del cliente</option>
+          <option value="NAME_ASC">Nombre: A - Z</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sección Principal del Catálogo a 2 Columnas -->
+<section class="edelyx-catalog-section">
+  <div class="edelyx-catalog-layout">
+    <!-- Columna 1: Sidebar Izquierdo de Filtros (Blueprint: Filtro.png) -->
+    <aside
+      class="edelyx-filter-panel"
+      [class.edelyx-filter-panel-open]="showMobileFilters()"
+      aria-label="Filtros del catálogo"
+    >
+      <!-- Elegible para Envío Gratuito -->
+      <div class="edelyx-filter-group">
+        <h2 class="edelyx-filter-heading">Envío Prioritario</h2>
+        <label class="edelyx-filter-check-row">
+          <input
+            type="checkbox"
+            [checked]="freeShippingOnly()"
+            (change)="toggleFreeShipping()"
+            class="edelyx-filter-checkbox"
+          />
+          <span>
+            <span class="edelyx-filter-check-title">Entrega GRATIS</span>
+            <span class="edelyx-filter-check-caption">
+              Obtén Entrega GRATIS en pedidos elegibles enviados por EDELYX.
+            </span>
+          </span>
+        </label>
+      </div>
+
+      <!-- Categorías Activas -->
+      <div class="edelyx-filter-group">
+        <h2 class="edelyx-filter-heading">Categorías</h2>
+        <div class="edelyx-filter-list">
+          <button
+            type="button"
+            (click)="selectCategory(undefined)"
+            [class.edelyx-filter-link-active]="selectedCategoryId() === undefined"
+            class="edelyx-filter-link"
+          >
+            <span>Todo el Catálogo</span>
+            <i class="pi pi-angle-right"></i>
+          </button>
+
+          @for (cat of categories(); track cat.id) {
+            <button
+              type="button"
+              (click)="selectCategory(cat.id)"
+              [class.edelyx-filter-link-active]="selectedCategoryId() === cat.id"
+              class="edelyx-filter-link"
+            >
+              <span>{{ cat.name }}</span>
+              <i class="pi pi-angle-right"></i>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Opinión de los Clientes (Calificación por Estrellas) -->
+      <div class="edelyx-filter-group">
+        <h2 class="edelyx-filter-heading">Opinión de Clientes</h2>
+        <div class="edelyx-filter-list">
+          <button
+            type="button"
+            (click)="setMinRating(4.9)"
+            [class.edelyx-stars-filter-active]="minRating() === 4.9"
+            class="edelyx-stars-filter-btn"
+          >
+            <span class="edelyx-stars-gold">★★★★★</span>
+            <span>4.9 o más</span>
+          </button>
+
+          <button
+            type="button"
+            (click)="setMinRating(4)"
+            [class.edelyx-stars-filter-active]="minRating() === 4"
+            class="edelyx-stars-filter-btn"
+          >
+            <span>
+              <span class="edelyx-stars-gold">★★★★</span><span class="edelyx-stars-muted">★</span>
+            </span>
+            <span>4.0 o más</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Rango de Precios con Histograma Visual -->
+      <div class="edelyx-filter-group">
+        <h2 class="edelyx-filter-heading">Precio</h2>
+        <span class="edelyx-price-current">{{ activePriceLabel() }}</span>
+
+        <div class="edelyx-price-bars" aria-hidden="true">
+          @for (bar of priceHistogramBars; track $index) {
+            <span
+              class="edelyx-price-bar"
+              [class.edelyx-price-bar-highlight]="selectedPriceRange() !== 'ALL'"
+              [style.height.%]="bar"
+            ></span>
+          }
+        </div>
+
+        <div class="edelyx-filter-list">
+          @for (range of priceRanges; track range.id) {
+            <button
+              type="button"
+              (click)="setPriceRange(range.id)"
+              [class.edelyx-filter-link-active]="selectedPriceRange() === range.id"
+              class="edelyx-filter-link"
+            >
+              <span>{{ range.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Limpiar Filtros -->
+      @if (hasActiveFilters()) {
+        <button type="button" (click)="clearAllFilters()" class="edelyx-clear-filters-btn">
+          <i class="pi pi-filter-slash"></i>
+          Limpiar filtros activos
+        </button>
+      }
+    </aside>
+
+    <!-- Columna 2: Área Principal de Productos (Blueprint: listado.png) -->
+    <div>
+      <header class="edelyx-catalog-header">
+        <h1 class="edelyx-catalog-title">{{ activeCategoryName() }}</h1>
+        <span class="edelyx-catalog-subtitle">
+          Precios con IVA incluido · Selección verificada EDELYX
+        </span>
+      </header>
+
+      <!-- Estado de Carga -->
+      @if (isLoading()) {
+        <div class="edelyx-state-box">
+          <i class="pi pi-spin pi-spinner edelyx-spinner"></i>
+          <span class="edelyx-state-title">Sincronizando Catálogo EDELYX</span>
+          <span class="edelyx-state-desc">Consultando inventario en tiempo real...</span>
+        </div>
+      }
+
+      <!-- Error de Conexión -->
+      @if (errorMessage()) {
+        <div class="edelyx-error-banner" role="alert">
+          <i class="pi pi-exclamation-triangle"></i>
+          <span>{{ errorMessage() }}</span>
+          <button type="button" (click)="loadProducts()" class="edelyx-btn-outline">
+            Reintentar
+          </button>
+        </div>
+      }
+
+      <!-- Grid de Tarjetas de Producto -->
+      @if (!isLoading() && products().length > 0) {
+        <div class="edelyx-product-grid">
+          @for (product of products(); track product.id) {
+            <article class="edelyx-card">
+              <!-- Contenedor Blanco/Neutro de Imagen + Botón Favorito (Corazón) -->
+              <div class="edelyx-card-image-wrapper">
+                <img
+                  [src]="product.imageUrl"
+                  [alt]="product.name"
+                  loading="lazy"
+                  class="edelyx-card-img"
+                />
+
+                @if (product.stock > 0 && product.stock <= 15) {
+                  <span class="edelyx-stock-badge">Quedan {{ product.stock }}</span>
+                }
+
+                <button
+                  type="button"
+                  (click)="toggleWishlist(product.id)"
+                  [class.edelyx-wishlist-btn-active]="isWishlisted(product.id)"
+                  [attr.aria-label]="'Guardar ' + product.name + ' en favoritos'"
+                  class="edelyx-wishlist-btn"
+                >
+                  <i
+                    class="pi"
+                    [class.pi-heart-fill]="isWishlisted(product.id)"
+                    [class.pi-heart]="!isWishlisted(product.id)"
+                  ></i>
+                </button>
+              </div>
+
+              <!-- Cuerpo Editorial y Comercial de la Tarjeta -->
+              <div class="edelyx-card-body">
+                <div>
+                  <!-- Badge de Categoría en #B67E7D + SKU -->
+                  <div class="edelyx-card-meta">
+                    <span class="edelyx-badge-category">{{ product.categoryName }}</span>
+                    <span class="edelyx-sku-label">{{ product.sku }}</span>
+                  </div>
+
+                  <!-- Título en Teko -->
+                  <h2 class="edelyx-product-name" [title]="product.name">
+                    {{ product.name }}
+                  </h2>
+
+                  <!-- Descripción en Eczar -->
+                  <p class="edelyx-product-desc">{{ product.description }}</p>
+
+                  <!-- Calificación de Estrellas Doradas: 5.0 ★★★★★ (N) -->
+                  <div class="edelyx-stars-rating">
+                    <span class="edelyx-rating-score">{{ getProductRating(product) }}</span>
+                    <span class="edelyx-rating-stars" aria-hidden="true">★★★★★</span>
+                    <span class="edelyx-rating-count">({{ getReviewCount(product) }})</span>
+                  </div>
+                </div>
+
+                <div>
+                  <!-- Desglose de Precio en Eczar ($2,848⁰²) -->
+                  <div class="edelyx-price-block">
+                    <div class="edelyx-price-row">
+                      <span class="edelyx-price-currency">$</span>
+                      <span class="edelyx-price-tag">{{ getPriceInteger(product.price) }}</span>
+                      <span class="edelyx-price-cents">{{ getPriceCents(product.price) }}</span>
+                    </div>
+                    <span class="edelyx-installments-text">
+                      Hasta 12 meses de ${{ getMonthlyInstallment(product.price) }} sin intereses
+                    </span>
+                  </div>
+
+                  <!-- Badge de Entrega GRATIS -->
+                  <div class="edelyx-shipping-group">
+                    @if (isFreeShippingEligible(product)) {
+                      <div class="edelyx-shipping-badge">
+                        <span class="edelyx-shipping-free">Entrega GRATIS</span>
+                        <span>en envío prioritario</span>
+                      </div>
+                    }
+                    <span class="edelyx-fulfillment-tag">
+                      {{ product.stock > 0 ? 'Enviado por EDELYX' : 'Temporalmente agotado' }}
+                    </span>
+                  </div>
+
+                  <!-- Botón de Compra Prominente con Micro-animación -->
+                  <div class="edelyx-card-cta">
+                    <button
+                      type="button"
+                      [disabled]="product.stock === 0 || isMaxStockReached(product)"
+                      (click)="addToCart(product)"
+                      [class.edelyx-btn-added]="isRecentlyAdded(product.id)"
+                      class="edelyx-btn-primary"
+                    >
+                      <i
+                        class="pi"
+                        [class.pi-check]="isRecentlyAdded(product.id)"
+                        [class.pi-shopping-cart]="!isRecentlyAdded(product.id)"
+                      ></i>
+                      <span>
+                        @if (product.stock === 0) {
+                          Agotado
+                        } @else if (isRecentlyAdded(product.id)) {
+                          Agregado al carrito
+                        } @else if (isMaxStockReached(product)) {
+                          Máx. en carrito ({{ product.stock }})
+                        } @else {
+                          Agregar al carrito
+                        }
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+
+        <!-- Paginador Centrado estilo Amazon (Blueprint: listado.png) -->
+        <nav class="edelyx-pagination" aria-label="Paginación del catálogo">
+          <div class="edelyx-pagination-bar">
+            <button
+              type="button"
+              [disabled]="currentPage() === 0"
+              (click)="prevPage()"
+              class="edelyx-page-nav-btn"
+            >
+              <i class="pi pi-chevron-left"></i>
+              <span>Anterior</span>
+            </button>
+
+            @for (page of pageNumbers(); track page) {
+              <button
+                type="button"
+                (click)="goToPage(page)"
+                [class.edelyx-page-num-active]="currentPage() === page"
+                class="edelyx-page-num-btn"
+              >
+                {{ page + 1 }}
+              </button>
+            }
+
+            <button
+              type="button"
+              [disabled]="currentPage() + 1 >= totalPages()"
+              (click)="nextPage()"
+              class="edelyx-page-nav-btn"
+            >
+              <span>Siguiente</span>
+              <i class="pi pi-chevron-right"></i>
+            </button>
+          </div>
+        </nav>
+      }
+
+      <!-- Estado Vacío -->
+      @if (!isLoading() && !errorMessage() && products().length === 0) {
+        <div class="edelyx-state-box">
+          <i class="pi pi-inbox edelyx-state-icon"></i>
+          <span class="edelyx-state-title">Sin coincidencias en el catálogo</span>
+          <span class="edelyx-state-desc">
+            No encontramos productos con los filtros actuales. Prueba restableciendo tu búsqueda.
+          </span>
+          @if (hasActiveFilters()) {
+            <div class="edelyx-card-cta">
+              <button type="button" (click)="clearAllFilters()" class="edelyx-btn-outline">
+                Ver todos los productos
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

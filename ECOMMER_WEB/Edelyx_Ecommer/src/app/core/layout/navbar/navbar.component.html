@@ -1,0 +1,111 @@
+<header class="edelyx-nav-main">
+  <!-- Nivel 1: Barra Superior (Logo + Ubicación + Buscador estilo Amazon + Pedidos + Carrito) -->
+  <div class="edelyx-nav-top">
+    <!-- Marca Oficial EDELYX -->
+    <a
+      routerLink="/"
+      (click)="selectedCategoryId.set(''); searchQuery.set(''); onFilterChange()"
+      class="edelyx-brand-link"
+      aria-label="Ir al inicio de EDELYX"
+    >
+      <div class="edelyx-logo-badge">E</div>
+      <div class="edelyx-brand-text">
+        <span class="edelyx-brand-title">EDELYX</span>
+        <span class="edelyx-brand-sub">E-Commer</span>
+      </div>
+    </a>
+
+    <!-- Indicador de Cobertura / Entrega -->
+    <div class="edelyx-location-pill">
+      <i class="pi pi-map-marker edelyx-location-icon"></i>
+      <div>
+        <span class="edelyx-location-overline">Entrega en todo México</span>
+        <span class="edelyx-location-value">Envío Prioritario</span>
+      </div>
+    </div>
+
+    <!-- Buscador Central Integrado estilo Amazon -->
+    <div class="edelyx-search-box" role="search">
+      <select
+        aria-label="Filtrar búsqueda por categoría"
+        [ngModel]="selectedCategoryId()"
+        (ngModelChange)="selectedCategoryId.set($event); onFilterChange()"
+        class="edelyx-search-select"
+      >
+        <option value="">Todas las categorías</option>
+        @for (cat of categories(); track cat.id) {
+          <option [value]="cat.id">{{ cat.name }}</option>
+        }
+      </select>
+
+      <input
+        type="text"
+        aria-label="Buscar en EDELYX"
+        placeholder="Buscar en EDELYX por producto, marca o SKU..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        (keyup.enter)="onFilterChange()"
+        class="edelyx-search-input"
+      />
+
+      <button
+        type="button"
+        aria-label="Ejecutar búsqueda"
+        (click)="onFilterChange()"
+        class="edelyx-search-btn"
+      >
+        <i class="pi pi-search"></i>
+      </button>
+    </div>
+
+    <!-- Acciones Derecha: Mis Pedidos y Carrito Reactivo -->
+    <div class="edelyx-nav-actions">
+      <a routerLink="/orders" class="edelyx-nav-action-link">
+        <span class="edelyx-nav-action-overline">Devoluciones y</span>
+        <span class="edelyx-nav-action-title">Mis Pedidos</span>
+      </a>
+
+      <button
+        type="button"
+        (click)="cartService.openDrawer()"
+        class="edelyx-cart-btn"
+        aria-label="Ver carrito de compras"
+      >
+        <i class="pi pi-shopping-cart edelyx-cart-icon"></i>
+        <span class="edelyx-cart-label">Carrito</span>
+        <span #cartCounter class="edelyx-cart-counter">{{ totalItems() }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Nivel 2: Sub-barra Horizontal de Categorías -->
+  <nav class="edelyx-nav-subbar" aria-label="Categorías principales">
+    <div class="edelyx-nav-subbar-inner">
+      <button
+        type="button"
+        (click)="selectedCategoryId.set(''); onFilterChange()"
+        [class.edelyx-subbar-all-active]="selectedCategoryId() === ''"
+        class="edelyx-subbar-all-btn"
+      >
+        <i class="pi pi-bars"></i>
+        <span>Todo</span>
+      </button>
+
+      @for (cat of categories(); track cat.id) {
+        <button
+          type="button"
+          (click)="selectedCategoryId.set(cat.id.toString()); onFilterChange()"
+          [class.edelyx-subbar-link-active]="selectedCategoryId() === cat.id.toString()"
+          class="edelyx-subbar-link"
+        >
+          {{ cat.name }}
+        </button>
+      }
+
+      <div class="edelyx-subbar-promo">
+        <i class="pi pi-verified edelyx-subbar-promo-icon"></i>
+        <span>Entrega GRATIS en pedidos elegibles</span>
+      </div>
+    </div>
+  </nav>
+</header>

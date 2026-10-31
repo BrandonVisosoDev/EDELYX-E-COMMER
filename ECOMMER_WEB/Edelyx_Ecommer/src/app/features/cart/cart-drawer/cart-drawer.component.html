@@ -1,0 +1,215 @@
+<div
+  class="edelyx-drawer-root"
+  [class.edelyx-drawer-root-open]="isRendered()"
+  [attr.aria-hidden]="!cartService.isDrawerOpen()"
+>
+  <!-- Backdrop Oscuro Desenfocado -->
+  <div
+    #drawerBackdrop
+    (click)="closeDrawer()"
+    class="edelyx-drawer-backdrop"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Panel Lateral Desplegable -->
+  <aside
+    #drawerPanel
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="edelyx-cart-drawer-title"
+    class="edelyx-drawer-panel"
+  >
+    <!-- Cabecera del Carrito -->
+    <header class="edelyx-drawer-header">
+      <div class="edelyx-drawer-title-group">
+        <h2 id="edelyx-cart-drawer-title" class="edelyx-drawer-title">Tu Carrito</h2>
+        <span class="edelyx-drawer-count-badge">
+          {{ totalItems() }} {{ totalItems() === 1 ? 'artículo' : 'artículos' }}
+        </span>
+      </div>
+
+      <button
+        type="button"
+        (click)="closeDrawer()"
+        aria-label="Cerrar carrito de compras"
+        class="edelyx-drawer-close-btn"
+      >
+        <i class="pi pi-times"></i>
+      </button>
+    </header>
+
+    <!-- Aviso de Validación de Stock -->
+    @if (stockNotice()) {
+      <div class="edelyx-drawer-stock-alert" role="status">
+        <i class="pi pi-info-circle edelyx-drawer-stock-alert-icon"></i>
+        <span>{{ stockNotice() }}</span>
+      </div>
+    }
+
+    <!-- Cuerpo del Drawer: Lista de Productos o Estado Vacío -->
+    <div class="edelyx-drawer-body">
+      @if (items().length > 0) {
+        <div class="edelyx-drawer-list">
+          @for (item of items(); track item.product.id) {
+            <article class="edelyx-drawer-item">
+              <!-- Foto Miniatura -->
+              <div class="edelyx-drawer-thumb-box">
+                <img
+                  [src]="item.product.imageUrl"
+                  [alt]="item.product.name"
+                  loading="lazy"
+                  class="edelyx-drawer-thumb-img"
+                />
+              </div>
+
+              <!-- Información y Controles del Producto -->
+              <div class="edelyx-drawer-item-info">
+                <div>
+                  <div class="edelyx-drawer-item-top">
+                    <h3 class="edelyx-drawer-item-name" [title]="item.product.name">
+                      {{ item.product.name }}
+                    </h3>
+
+                    <button
+                      type="button"
+                      (click)="removeItem(item.product.id, $event)"
+                      [attr.aria-label]="'Eliminar ' + item.product.name + ' del carrito'"
+                      class="edelyx-drawer-remove-btn"
+                    >
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </div>
+
+                  <div class="edelyx-drawer-item-meta">
+                    <span class="edelyx-drawer-unit-price">
+                      ${{ formatAmount(item.product.price) }} c/u
+                    </span>
+
+                    <span
+                      class="edelyx-drawer-stock-tag"
+                      [class.edelyx-drawer-stock-max]="item.quantity >= item.product.stock"
+                    >
+                      @if (item.quantity >= item.product.stock) {
+                        Máx. {{ item.product.stock }} disp.
+                      } @else {
+                        Stock: {{ item.product.stock }}
+                      }
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Selector de Cantidad (- / +) y Subtotal por Producto -->
+                <div class="edelyx-drawer-item-bottom">
+                  <div class="edelyx-drawer-qty-control" role="group" aria-label="Cantidad">
+                    <button
+                      type="button"
+                      [disabled]="item.quantity <= 1"
+                      (click)="decrementQuantity(item, $event)"
+                      [attr.aria-label]="'Disminuir cantidad de ' + item.product.name"
+                      class="edelyx-drawer-qty-btn"
+                    >
+                      <i class="pi pi-minus"></i>
+                    </button>
+
+                    <span class="edelyx-drawer-qty-value">{{ item.quantity }}</span>
+
+                    <button
+                      type="button"
+                      [disabled]="item.quantity >= item.product.stock"
+                      (click)="incrementQuantity(item, $event)"
+                      [attr.aria-label]="'Aumentar cantidad de ' + item.product.name"
+                      class="edelyx-drawer-qty-btn"
+                    >
+                      <i class="pi pi-plus"></i>
+                    </button>
+                  </div>
+
+                  <div class="edelyx-drawer-subtotal-group">
+                    <span class="edelyx-drawer-subtotal-label">Subtotal</span>
+                    <span class="edelyx-drawer-subtotal-value">
+                      ${{ formatAmount(getItemSubtotal(item)) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <!-- Estado Vacío Estilizado -->
+        <div class="edelyx-drawer-empty">
+          <div class="edelyx-drawer-empty-badge" aria-hidden="true">
+            <i class="pi pi-shopping-bag"></i>
+          </div>
+          <h3 class="edelyx-drawer-empty-title">Tu carrito está vacío</h3>
+          <p class="edelyx-drawer-empty-desc">
+            Aún no has seleccionado productos. Explora el catálogo oficial EDELYX y disfruta envío
+            prioritario sin costo.
+          </p>
+          <button
+            type="button"
+            (click)="exploreCatalog($event)"
+            class="edelyx-drawer-explore-btn"
+          >
+            <i class="pi pi-compass"></i>
+            <span>Explorar Catálogo</span>
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Pie Financiero y Botones de Acción -->
+    @if (items().length > 0) {
+      <footer class="edelyx-drawer-footer">
+        <div class="edelyx-drawer-summary">
+          <div class="edelyx-drawer-summary-row">
+            <span class="edelyx-drawer-summary-label">
+              Subtotal ({{ totalItems() }} {{ totalItems() === 1 ? 'pieza' : 'piezas' }})
+            </span>
+            <span class="edelyx-drawer-summary-value">${{ formatAmount(totalAmount()) }}</span>
+          </div>
+
+          <div class="edelyx-drawer-summary-row">
+            <span class="edelyx-drawer-summary-label">Envío Prioritario EDELYX</span>
+            <span class="edelyx-drawer-shipping-free">GRATIS</span>
+          </div>
+
+          <div class="edelyx-drawer-total-row">
+            <div>
+              <span class="edelyx-drawer-total-label">Gran Total</span>
+              <span class="edelyx-drawer-total-note">Precios con IVA incluido</span>
+            </div>
+
+            <div class="edelyx-drawer-total-price">
+              <span class="edelyx-drawer-total-currency">$</span>
+              <span class="edelyx-drawer-total-integer">
+                {{ getPriceInteger(totalAmount()) }}
+              </span>
+              <span class="edelyx-drawer-total-cents">{{ getPriceCents(totalAmount()) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="edelyx-drawer-actions">
+          <button
+            type="button"
+            (click)="proceedToCheckout($event)"
+            class="edelyx-btn-primary"
+          >
+            <i class="pi pi-lock"></i>
+            <span>Proceder al Pago</span>
+          </button>
+
+          <button
+            type="button"
+            (click)="clearCart($event)"
+            class="edelyx-drawer-clear-btn"
+          >
+            <i class="pi pi-trash"></i>
+            <span>Vaciar Carrito</span>
+          </button>
+        </div>
+      </footer>
+    }
+  </aside>
+</div>

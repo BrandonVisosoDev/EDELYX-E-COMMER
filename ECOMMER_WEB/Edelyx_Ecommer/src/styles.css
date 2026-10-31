@@ -1,0 +1,13 @@
+/* Íconos de PrimeNG (carrito, lupa, estrellas, favoritos, navegación) */
+@import 'primeicons/primeicons.css';
+
+/* Sistema de Diseño Oficial EDELYX (incluye directivas y @layer components de Tailwind) */
+@import './styles/design-system.css';
+
+/* Ocultar banner de licencia comercial de PrimeUI */
+#p-license-host {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

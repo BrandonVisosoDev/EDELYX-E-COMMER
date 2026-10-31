@@ -1,2 +1,8 @@
-# Carpeta para GEMINI
+# Carpetas para GEMINI
 GEMINI/
+**/GEMINI/
+ECOMMER_WEB/GEMINI/
+
+# Habilidades y configuración local de Agentes de IA
+.agents/
+skills-lock.json
