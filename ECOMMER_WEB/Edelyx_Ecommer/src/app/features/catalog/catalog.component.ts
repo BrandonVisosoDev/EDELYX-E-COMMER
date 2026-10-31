@@ -68,10 +68,16 @@ export class CatalogComponent implements OnInit {
   // Signal computado `products()` consumido directamente por catalog.component.html
   products = computed<Product[]>(() => {
     let list = [...this.rawProducts()];
+    const categoryId = this.selectedCategoryId();
     const query = this.searchQuery().trim().toLowerCase();
     const range = this.priceRanges.find((r) => r.id === this.selectedPriceRange());
     const minStars = this.minRating();
     const onlyFree = this.freeShippingOnly();
+
+    // Filtro por categoría seleccionada
+    if (categoryId !== undefined && categoryId !== null) {
+      list = list.filter((p) => p.categoryId === categoryId);
+    }
 
     if (query) {
       list = list.filter(

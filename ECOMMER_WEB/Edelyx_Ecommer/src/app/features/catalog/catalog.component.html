@@ -5,7 +5,9 @@
       <span>Mostrando</span>
       <span class="edelyx-results-highlight">{{ products().length }}</span>
       <span>de</span>
-      <span class="edelyx-results-highlight">{{ totalElements() }}</span>
+      <span class="edelyx-results-highlight">{{
+        selectedCategoryId() ? products().length : totalElements()
+      }}</span>
       <span>productos en</span>
       <span class="edelyx-results-highlight">{{ activeCategoryName() }}</span>
       @if (searchQuery()) {
