@@ -1,30 +1,36 @@
-<header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-lg">
-  <!-- Nivel 1: Barra Principal -->
-  <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4 max-w-7xl">
-    <!-- Logo -->
-    <a routerLink="/" class="flex items-center gap-2 group">
-      <div
-        class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-slate-950 font-black text-xl shadow-md group-hover:scale-105 transition-transform"
-      >
-        E
-      </div>
-      <div>
-        <span class="text-xl font-black tracking-wider text-white">EDELYX</span>
-        <span class="text-xs text-emerald-400 font-semibold block -mt-1 tracking-widest uppercase"
-          >E-Commer</span
-        >
+<header class="edelyx-nav-main">
+  <!-- Nivel 1: Barra Superior (Logo + Ubicación + Buscador estilo Amazon + Pedidos + Carrito) -->
+  <div class="edelyx-nav-top">
+    <!-- Marca Oficial EDELYX -->
+    <a
+      routerLink="/"
+      (click)="selectedCategoryId.set(''); searchQuery.set(''); onFilterChange()"
+      class="edelyx-brand-link"
+      aria-label="Ir al inicio de EDELYX"
+    >
+      <div class="edelyx-logo-badge">E</div>
+      <div class="edelyx-brand-text">
+        <span class="edelyx-brand-title">EDELYX</span>
+        <span class="edelyx-brand-sub">E-Commer</span>
       </div>
     </a>
 
-    <!-- Buscador Integrado con Categoría -->
-    <div
-      class="flex-1 max-w-2xl mx-4 hidden md:flex items-center bg-slate-800/90 border border-slate-700/80 rounded-xl overflow-hidden focus-within:border-emerald-500 transition-colors"
-    >
-      <!-- Selector de Categoría -->
+    <!-- Indicador de Cobertura / Entrega -->
+    <div class="edelyx-location-pill">
+      <i class="pi pi-map-marker edelyx-location-icon"></i>
+      <div>
+        <span class="edelyx-location-overline">Entrega en todo México</span>
+        <span class="edelyx-location-value">Envío Prioritario</span>
+      </div>
+    </div>
+
+    <!-- Buscador Central Integrado estilo Amazon -->
+    <div class="edelyx-search-box" role="search">
       <select
+        aria-label="Filtrar búsqueda por categoría"
         [ngModel]="selectedCategoryId()"
         (ngModelChange)="selectedCategoryId.set($event); onFilterChange()"
-        class="bg-slate-850 text-slate-300 text-xs px-3 py-2.5 border-r border-slate-700 outline-none cursor-pointer hover:text-white"
+        class="edelyx-search-select"
       >
         <option value="">Todas las categorías</option>
         @for (cat of categories(); track cat.id) {
@@ -32,75 +38,69 @@
         }
       </select>
 
-      <!-- Input de Búsqueda -->
       <input
         type="text"
-        placeholder="Buscar productos por nombre, SKU..."
+        aria-label="Buscar en EDELYX"
+        placeholder="Buscar en EDELYX por producto, marca o SKU..."
         [ngModel]="searchQuery()"
         (ngModelChange)="searchQuery.set($event)"
         (keyup.enter)="onFilterChange()"
-        class="w-full bg-transparent text-sm text-white px-4 py-2 outline-none placeholder-slate-500"
+        class="edelyx-search-input"
       />
 
-      <!-- Botón Buscar -->
       <button
+        type="button"
+        aria-label="Ejecutar búsqueda"
         (click)="onFilterChange()"
-        class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-5 py-2.5 transition flex items-center justify-center cursor-pointer font-bold"
+        class="edelyx-search-btn"
       >
         <i class="pi pi-search"></i>
       </button>
     </div>
 
-    <!-- Acciones Derecha (Pedidos y Carrito) -->
-    <div class="flex items-center gap-5">
-      <!-- Rastrear Pedido -->
-      <a
-        routerLink="/orders"
-        class="text-xs text-slate-300 hover:text-white flex flex-col items-start leading-tight"
-      >
-        <span class="text-slate-400">Consultar</span>
-        <span class="font-bold">Mis Pedidos</span>
+    <!-- Acciones Derecha: Mis Pedidos y Carrito Reactivo -->
+    <div class="edelyx-nav-actions">
+      <a routerLink="/orders" class="edelyx-nav-action-link">
+        <span class="edelyx-nav-action-overline">Devoluciones y</span>
+        <span class="edelyx-nav-action-title">Mis Pedidos</span>
       </a>
 
-      <!-- Botón Carrito con Badge -->
-      <button
-        class="relative bg-slate-800 hover:bg-slate-750 border border-slate-700 text-white p-2.5 rounded-xl transition cursor-pointer flex items-center gap-2"
-      >
-        <i class="pi pi-shopping-cart text-lg text-emerald-400"></i>
-        <span class="hidden sm:inline text-xs font-bold">Carrito</span>
-
-        <!-- Contador -->
-        <span
-          class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-lg"
-        >
-          {{ cartCount() }}
-        </span>
+      <button type="button" class="edelyx-cart-btn" aria-label="Ver carrito de compras">
+        <i class="pi pi-shopping-cart edelyx-cart-icon"></i>
+        <span class="edelyx-cart-label">Carrito</span>
+        <span class="edelyx-cart-counter">{{ cartCount() }}</span>
       </button>
     </div>
   </div>
 
-  <!-- Nivel 2: Sub-Barra Horizontal de Categorías Rápidas -->
-  <div class="bg-slate-950/80 border-t border-slate-800/60 px-4 py-1.5 hidden sm:block">
-    <div
-      class="container mx-auto flex items-center gap-6 text-xs text-slate-400 max-w-7xl overflow-x-auto"
-    >
+  <!-- Nivel 2: Sub-barra Horizontal de Categorías -->
+  <nav class="edelyx-nav-subbar" aria-label="Categorías principales">
+    <div class="edelyx-nav-subbar-inner">
       <button
+        type="button"
         (click)="selectedCategoryId.set(''); onFilterChange()"
-        [class.text-emerald-400]="selectedCategoryId() === ''"
-        class="hover:text-white transition font-medium whitespace-nowrap cursor-pointer flex items-center gap-1"
+        [class.edelyx-subbar-all-active]="selectedCategoryId() === ''"
+        class="edelyx-subbar-all-btn"
       >
-        <i class="pi pi-th-large text-[10px]"></i> Todo el Catálogo
+        <i class="pi pi-bars"></i>
+        <span>Todo</span>
       </button>
 
       @for (cat of categories(); track cat.id) {
         <button
+          type="button"
           (click)="selectedCategoryId.set(cat.id.toString()); onFilterChange()"
-          [class.text-emerald-400]="selectedCategoryId() === cat.id.toString()"
-          class="hover:text-white transition whitespace-nowrap cursor-pointer"
+          [class.edelyx-subbar-link-active]="selectedCategoryId() === cat.id.toString()"
+          class="edelyx-subbar-link"
         >
           {{ cat.name }}
         </button>
       }
+
+      <div class="edelyx-subbar-promo">
+        <i class="pi pi-verified edelyx-subbar-promo-icon"></i>
+        <span>Entrega GRATIS en pedidos elegibles</span>
+      </div>
     </div>
-  </div>
+  </nav>
 </header>

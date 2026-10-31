@@ -1,7 +1,5 @@
-/* Íconos de PrimeNG (carrito, lupa, estrellas, etc.) */
+/* Íconos de PrimeNG (carrito, lupa, estrellas, favoritos, navegación) */
 @import 'primeicons/primeicons.css';
 
-/* Capas base de Tailwind CSS */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Sistema de Diseño Oficial EDELYX (incluye directivas y @layer components de Tailwind) */
+@import './styles/design-system.css';

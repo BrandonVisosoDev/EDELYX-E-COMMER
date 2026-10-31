@@ -1,0 +1,572 @@
+/* ==========================================================================
+   EDELYX OFFICIAL DESIGN SYSTEM
+   Arquitectura Semántica Zero-Utility-Soup (@layer base + @layer components)
+   Paleta Oficial: #040B15 | #640000 | #400001 | #B67E7D | #FF1756 | #454545
+   Tipografías: Teko (Títulos / Marca) & Eczar (Precios / Editorial)
+   ========================================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background-color: #040b15;
+    color: #f1f5f9;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #454545 #040b15;
+  }
+
+  body {
+    @apply bg-edelyx-bg text-slate-100 antialiased selection:bg-edelyx-accent selection:text-white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #040b15;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #454545;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #b67e7d;
+  }
+
+  :focus-visible {
+    outline: 2px solid #ff1756;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* ========================================================================
+     1. SHELL & CONTENEDORES GLOBALES
+     ======================================================================== */
+  .edelyx-page-bg {
+    @apply min-h-screen bg-edelyx-bg text-slate-100 flex flex-col;
+  }
+
+  .edelyx-main {
+    @apply flex-1 w-full;
+  }
+
+  .edelyx-container {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full;
+  }
+
+  .edelyx-footer {
+    @apply mt-12 border-t border-edelyx-border/70 bg-edelyx-dark py-6 px-4 text-center;
+  }
+
+  .edelyx-footer-brand {
+    @apply font-teko text-2xl uppercase tracking-[0.14em] text-white block leading-none;
+  }
+
+  .edelyx-footer-copy {
+    @apply font-eczar text-xs text-edelyx-rose mt-1 block;
+  }
+
+  /* ========================================================================
+     2. TOKENS TIPOGRÁFICOS CON IDENTIDAD
+     ======================================================================== */
+  .edelyx-heading {
+    @apply font-teko uppercase tracking-wider text-white;
+  }
+
+  .edelyx-editorial-text {
+    @apply font-eczar text-edelyx-muted;
+  }
+
+  /* ========================================================================
+     3. NAVBAR DE 2 NIVELES (Blueprint: BarraSinLogeo.png)
+     ======================================================================== */
+  .edelyx-nav-main {
+    @apply sticky top-0 z-50 bg-edelyx-bg border-b border-edelyx-border shadow-[0_12px_28px_rgba(0,0,0,0.65)];
+  }
+
+  .edelyx-nav-top {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 md:gap-5;
+  }
+
+  /* Marca / Logo EDELYX */
+  .edelyx-brand-link {
+    @apply flex items-center gap-2.5 shrink-0 cursor-pointer no-underline;
+  }
+
+  .edelyx-logo-badge {
+    @apply w-10 h-10 rounded-lg bg-gradient-to-br from-edelyx-accent via-edelyx-wine to-edelyx-wine-dark border border-edelyx-accent/50 flex items-center justify-center font-teko text-2xl font-bold text-white leading-none pt-0.5 shadow-[0_4px_14px_rgba(255,23,86,0.28)] transition-transform duration-200;
+  }
+
+  .edelyx-brand-link:hover .edelyx-logo-badge {
+    @apply scale-105;
+  }
+
+  .edelyx-brand-text {
+    @apply flex flex-col leading-none;
+  }
+
+  .edelyx-brand-title {
+    @apply font-teko text-3xl font-bold tracking-[0.1em] uppercase text-white leading-none;
+  }
+
+  .edelyx-brand-sub {
+    @apply text-[10px] font-semibold tracking-[0.22em] uppercase text-edelyx-rose -mt-0.5;
+  }
+
+  /* Indicador de Ubicación / Envío estilo Amazon */
+  .edelyx-location-pill {
+    @apply hidden xl:flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-transparent hover:border-edelyx-border transition-colors shrink-0;
+  }
+
+  .edelyx-location-icon {
+    @apply text-edelyx-accent text-sm mt-0.5;
+  }
+
+  .edelyx-location-overline {
+    @apply block text-[11px] text-edelyx-rose leading-tight;
+  }
+
+  .edelyx-location-value {
+    @apply block text-xs font-bold text-white leading-tight;
+  }
+
+  /* Buscador Central Integrado estilo Amazon */
+  .edelyx-search-box {
+    @apply order-3 md:order-none w-full md:w-auto md:flex-1 max-w-3xl flex items-stretch bg-edelyx-card border border-edelyx-border rounded-lg overflow-hidden focus-within:border-edelyx-accent focus-within:ring-2 focus-within:ring-edelyx-accent/30 transition-all duration-200;
+  }
+
+  .edelyx-search-select {
+    @apply bg-edelyx-wine-dark/80 hover:bg-edelyx-wine/80 text-slate-200 text-xs font-medium px-3 py-2.5 border-r border-edelyx-border outline-none cursor-pointer transition-colors max-w-[145px] sm:max-w-[185px] truncate;
+  }
+
+  .edelyx-search-select option,
+  .edelyx-sort-select option {
+    @apply bg-edelyx-card text-slate-100;
+  }
+
+  .edelyx-search-input {
+    @apply flex-1 min-w-0 bg-transparent text-sm text-white px-3.5 py-2.5 outline-none placeholder:text-slate-400;
+  }
+
+  .edelyx-search-btn {
+    @apply bg-edelyx-accent hover:bg-edelyx-accent-hover active:bg-edelyx-wine text-white px-5 flex items-center justify-center cursor-pointer transition-colors duration-200 font-bold shrink-0;
+  }
+
+  /* Acciones Derecha: Mis Pedidos & Carrito */
+  .edelyx-nav-actions {
+    @apply flex items-center gap-2 sm:gap-4 shrink-0;
+  }
+
+  .edelyx-nav-action-link {
+    @apply px-2.5 py-1 rounded-lg border border-transparent hover:border-edelyx-border flex flex-col items-start leading-tight transition-colors cursor-pointer no-underline;
+  }
+
+  .edelyx-nav-action-overline {
+    @apply text-[11px] text-edelyx-rose;
+  }
+
+  .edelyx-nav-action-title {
+    @apply font-teko text-lg uppercase tracking-wider text-white leading-none mt-0.5;
+  }
+
+  .edelyx-cart-btn {
+    @apply relative bg-edelyx-card hover:bg-edelyx-wine-dark/80 border border-edelyx-border hover:border-edelyx-accent px-3.5 py-2 rounded-lg text-white flex items-center gap-2 cursor-pointer transition-all duration-200;
+  }
+
+  .edelyx-cart-icon {
+    @apply text-lg text-edelyx-accent;
+  }
+
+  .edelyx-cart-label {
+    @apply hidden sm:inline font-teko text-lg uppercase tracking-wider leading-none pt-0.5;
+  }
+
+  .edelyx-cart-counter {
+    @apply absolute -top-2 -right-2 min-w-[1.3rem] h-5 px-1 rounded-full bg-edelyx-accent text-white text-[11px] font-extrabold flex items-center justify-center shadow-[0_2px_8px_rgba(255,23,86,0.55)];
+  }
+
+  /* Nivel 2: Sub-barra de Categorías */
+  .edelyx-nav-subbar {
+    @apply bg-edelyx-wine-dark/50 border-t border-edelyx-border/70;
+  }
+
+  .edelyx-nav-subbar-inner {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 py-1.5 flex items-center gap-1.5 overflow-x-auto;
+  }
+
+  .edelyx-subbar-all-btn {
+    @apply font-teko text-base uppercase tracking-wider px-3 py-1 rounded-md border border-edelyx-border bg-edelyx-card hover:border-edelyx-accent text-white flex items-center gap-2 whitespace-nowrap cursor-pointer transition-all duration-150 shrink-0;
+  }
+
+  .edelyx-subbar-all-active {
+    @apply border-edelyx-accent bg-edelyx-wine text-white;
+  }
+
+  .edelyx-subbar-link {
+    @apply text-xs font-medium text-slate-200 hover:text-white hover:bg-edelyx-wine/50 border border-transparent hover:border-edelyx-border/80 px-3 py-1.5 rounded-md whitespace-nowrap cursor-pointer transition-all duration-150 shrink-0;
+  }
+
+  .edelyx-subbar-link-active {
+    @apply bg-edelyx-wine text-white border-edelyx-accent font-semibold shadow-[0_0_12px_rgba(255,23,86,0.22)];
+  }
+
+  .edelyx-subbar-promo {
+    @apply ml-auto hidden lg:flex items-center gap-1.5 text-xs font-eczar text-edelyx-rose whitespace-nowrap pl-4;
+  }
+
+  .edelyx-subbar-promo-icon {
+    @apply text-edelyx-accent;
+  }
+
+  /* ========================================================================
+     4. BARRA DE RESULTADOS Y ORDENAMIENTO (Blueprint: ORDENAR)
+     ======================================================================== */
+  .edelyx-results-bar {
+    @apply bg-edelyx-dark border-b border-edelyx-border/80 py-2.5;
+  }
+
+  .edelyx-results-bar-inner {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .edelyx-results-summary {
+    @apply font-eczar text-xs sm:text-sm text-slate-300 flex flex-wrap items-center gap-1.5;
+  }
+
+  .edelyx-results-highlight {
+    @apply font-semibold text-edelyx-accent;
+  }
+
+  .edelyx-sort-group {
+    @apply flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end;
+  }
+
+  .edelyx-mobile-filter-btn {
+    @apply lg:hidden bg-edelyx-card hover:bg-edelyx-wine/60 border border-edelyx-border hover:border-edelyx-accent text-white font-teko text-base uppercase tracking-wider px-3 py-1 rounded-lg flex items-center gap-1.5 cursor-pointer transition-colors;
+  }
+
+  .edelyx-mobile-filter-active {
+    @apply bg-edelyx-wine border-edelyx-accent;
+  }
+
+  .edelyx-sort-control {
+    @apply flex items-center gap-2;
+  }
+
+  .edelyx-sort-label {
+    @apply text-xs text-edelyx-rose font-medium;
+  }
+
+  .edelyx-sort-select {
+    @apply bg-edelyx-card border border-edelyx-border hover:border-edelyx-accent focus:border-edelyx-accent rounded-lg px-3 py-1.5 text-xs text-white outline-none cursor-pointer transition-colors;
+  }
+
+  /* ========================================================================
+     5. LAYOUT DE CATÁLOGO A 2 COLUMNAS (Sidebar + Grid Principal)
+     ======================================================================== */
+  .edelyx-catalog-section {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6;
+  }
+
+  .edelyx-catalog-layout {
+    @apply grid grid-cols-1 lg:grid-cols-[265px_minmax(0,1fr)] gap-6 items-start;
+  }
+
+  /* ========================================================================
+     6. PANEL LATERAL DE FILTROS (Blueprint: Filtro.png)
+     ======================================================================== */
+  .edelyx-filter-panel {
+    @apply hidden lg:block bg-edelyx-card border border-edelyx-border rounded-xl p-4 space-y-5 lg:sticky lg:top-28;
+  }
+
+  .edelyx-filter-panel-open {
+    @apply block;
+  }
+
+  .edelyx-filter-group {
+    @apply space-y-2 pb-4 border-b border-edelyx-border/60 last:border-b-0 last:pb-0;
+  }
+
+  .edelyx-filter-heading {
+    @apply font-teko text-xl uppercase tracking-wider text-white leading-none mb-2 flex items-center justify-between;
+  }
+
+  .edelyx-filter-check-row {
+    @apply flex items-start gap-2.5 cursor-pointer select-none p-1.5 rounded-lg hover:bg-edelyx-surface/50 transition-colors;
+  }
+
+  .edelyx-filter-checkbox {
+    @apply mt-0.5 w-4 h-4 accent-edelyx-accent rounded border-edelyx-border bg-edelyx-bg cursor-pointer shrink-0;
+  }
+
+  .edelyx-filter-check-title {
+    @apply text-xs font-bold text-emerald-400 block;
+  }
+
+  .edelyx-filter-check-caption {
+    @apply font-eczar text-xs text-slate-300 leading-snug block mt-0.5;
+  }
+
+  .edelyx-filter-list {
+    @apply space-y-1;
+  }
+
+  .edelyx-filter-link {
+    @apply w-full text-left text-xs text-slate-300 hover:text-white hover:bg-edelyx-surface/70 border border-transparent px-2.5 py-1.5 rounded-md flex items-center justify-between transition-all duration-150 cursor-pointer;
+  }
+
+  .edelyx-filter-link-active {
+    @apply bg-edelyx-wine/75 text-white font-semibold border-edelyx-accent/80;
+  }
+
+  /* Histograma / Rango de Precios inspirado en Filtro.png */
+  .edelyx-price-current {
+    @apply font-eczar text-sm font-bold text-white block mb-2;
+  }
+
+  .edelyx-price-bars {
+    @apply flex items-end gap-1 h-8 px-1 mb-2.5 border-b border-edelyx-accent/60 pb-1;
+  }
+
+  .edelyx-price-bar {
+    @apply flex-1 bg-edelyx-rose/35 rounded-t-sm transition-colors;
+  }
+
+  .edelyx-price-bar-highlight {
+    @apply bg-edelyx-accent;
+  }
+
+  /* Filtro de Calificación por Estrellas */
+  .edelyx-stars-filter-btn {
+    @apply w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md border border-transparent text-xs text-slate-300 hover:text-white hover:bg-edelyx-surface/70 transition-colors cursor-pointer;
+  }
+
+  .edelyx-stars-filter-active {
+    @apply bg-edelyx-wine/75 text-white border-edelyx-accent/80 font-semibold;
+  }
+
+  .edelyx-stars-gold {
+    @apply text-edelyx-gold text-sm tracking-tight leading-none;
+  }
+
+  .edelyx-stars-muted {
+    @apply text-slate-600 text-sm tracking-tight leading-none;
+  }
+
+  .edelyx-clear-filters-btn {
+    @apply w-full font-teko text-base uppercase tracking-wider py-1.5 px-3 rounded-lg border border-edelyx-border hover:border-edelyx-accent text-edelyx-rose hover:text-white bg-edelyx-dark hover:bg-edelyx-wine/40 transition-colors cursor-pointer text-center;
+  }
+
+  /* ========================================================================
+     7. TARJETA DE PRODUCTO Y GRID (Blueprint: listado.png)
+     ======================================================================== */
+  .edelyx-catalog-header {
+    @apply flex flex-wrap items-baseline justify-between gap-2 mb-5;
+  }
+
+  .edelyx-catalog-title {
+    @apply font-teko text-3xl sm:text-4xl font-semibold uppercase tracking-wider text-white leading-none;
+  }
+
+  .edelyx-catalog-subtitle {
+    @apply font-eczar text-sm text-edelyx-rose;
+  }
+
+  .edelyx-product-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5;
+  }
+
+  .edelyx-card {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl overflow-hidden flex flex-col justify-between transition-all duration-200 hover:border-edelyx-accent hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-10px_rgba(0,0,0,0.85)];
+  }
+
+  /* Contenedor blanco/neutro para destacar producto + Wishlist en esquina */
+  .edelyx-card-image-wrapper {
+    @apply relative w-full h-56 bg-[#F7F8FA] flex items-center justify-center p-3 overflow-hidden border-b border-edelyx-border/60;
+  }
+
+  .edelyx-card-img {
+    @apply max-h-full max-w-full object-contain transition-transform duration-300;
+  }
+
+  .edelyx-card:hover .edelyx-card-img {
+    @apply scale-105;
+  }
+
+  .edelyx-wishlist-btn {
+    @apply absolute bottom-3 left-3 w-9 h-9 rounded-full bg-white/95 hover:bg-edelyx-accent text-slate-800 hover:text-white border border-slate-300 hover:border-edelyx-accent flex items-center justify-center shadow-md cursor-pointer transition-all duration-200;
+  }
+
+  .edelyx-wishlist-btn-active {
+    @apply bg-edelyx-accent text-white border-edelyx-accent;
+  }
+
+  .edelyx-stock-badge {
+    @apply absolute top-3 right-3 px-2 py-0.5 rounded bg-edelyx-wine/90 text-white text-[10px] font-bold uppercase tracking-wider;
+  }
+
+  .edelyx-card-body {
+    @apply p-4 flex-1 flex flex-col justify-between gap-3;
+  }
+
+  .edelyx-card-meta {
+    @apply flex items-center justify-between gap-2 mb-1;
+  }
+
+  .edelyx-badge-category {
+    @apply text-xs font-semibold uppercase tracking-wider text-edelyx-rose;
+  }
+
+  .edelyx-sku-label {
+    @apply text-[11px] text-slate-500;
+  }
+
+  .edelyx-product-name {
+    @apply font-teko text-[1.45rem] font-medium uppercase tracking-[0.03em] text-white leading-[1.08] line-clamp-2 transition-colors duration-200;
+  }
+
+  .edelyx-card:hover .edelyx-product-name {
+    @apply text-edelyx-accent;
+  }
+
+  .edelyx-product-desc {
+    @apply font-eczar text-[0.84rem] text-edelyx-muted leading-snug line-clamp-2 mt-1;
+  }
+
+  /* Calificación de estrellas doradas: 5.0 ★★★★★ (N) */
+  .edelyx-stars-rating {
+    @apply flex items-center gap-1.5 mt-2 text-xs;
+  }
+
+  .edelyx-rating-score {
+    @apply font-eczar font-semibold text-slate-200;
+  }
+
+  .edelyx-rating-stars {
+    @apply text-edelyx-gold text-sm tracking-tight leading-none;
+  }
+
+  .edelyx-rating-count {
+    @apply text-edelyx-rose;
+  }
+
+  /* Desglose de Precio en Eczar ($2,848⁰²) */
+  .edelyx-price-block {
+    @apply mt-2 pt-2.5 border-t border-edelyx-border/50;
+  }
+
+  .edelyx-price-row {
+    @apply inline-flex items-start font-eczar text-white leading-none;
+  }
+
+  .edelyx-price-currency {
+    @apply text-sm font-semibold text-edelyx-rose mt-1 mr-0.5;
+  }
+
+  .edelyx-price-tag {
+    @apply font-eczar text-3xl font-bold tracking-tight text-white leading-none;
+  }
+
+  .edelyx-price-cents {
+    @apply text-xs font-bold text-slate-200 mt-1 ml-0.5;
+  }
+
+  .edelyx-installments-text {
+    @apply block font-eczar text-xs text-slate-400 mt-1;
+  }
+
+  /* Badge de Entrega GRATIS */
+  .edelyx-shipping-group {
+    @apply mt-2 space-y-1.5;
+  }
+
+  .edelyx-shipping-badge {
+    @apply text-xs text-slate-200 flex flex-wrap items-center gap-1.5;
+  }
+
+  .edelyx-shipping-free {
+    @apply font-bold text-emerald-400;
+  }
+
+  .edelyx-fulfillment-tag {
+    @apply inline-block text-[11px] bg-edelyx-surface border border-edelyx-border/80 text-edelyx-rose px-2 py-0.5 rounded;
+  }
+
+  /* Botones de Acción con Micro-animación */
+  .edelyx-card-cta {
+    @apply mt-3;
+  }
+
+  .edelyx-btn-primary {
+    @apply w-full bg-gradient-to-r from-edelyx-wine via-[#9E0028] to-edelyx-accent hover:from-edelyx-accent hover:via-[#D90D45] hover:to-edelyx-wine text-white font-teko text-xl uppercase tracking-wider py-2 px-4 rounded-full border border-edelyx-accent/50 shadow-[0_6px_18px_rgba(255,23,86,0.22)] hover:shadow-[0_8px_24px_rgba(255,23,86,0.42)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-45 disabled:pointer-events-none;
+  }
+
+  .edelyx-btn-added {
+    @apply from-emerald-700 via-emerald-600 to-emerald-500 border-emerald-400/60 shadow-[0_6px_18px_rgba(16,185,129,0.3)];
+  }
+
+  .edelyx-btn-outline {
+    @apply border border-edelyx-border hover:border-edelyx-accent text-slate-200 hover:text-white bg-edelyx-card hover:bg-edelyx-surface font-teko text-lg uppercase tracking-wider py-1.5 px-4 rounded-lg transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:pointer-events-none;
+  }
+
+  /* ========================================================================
+     8. ESTADOS (Carga / Error / Vacío) Y PAGINADOR CENTRADO
+     ======================================================================== */
+  .edelyx-state-box {
+    @apply bg-edelyx-card border border-edelyx-border rounded-xl p-12 text-center my-4;
+  }
+
+  .edelyx-state-icon {
+    @apply text-4xl text-edelyx-rose mb-3 inline-block;
+  }
+
+  .edelyx-spinner {
+    @apply text-4xl text-edelyx-accent animate-spin mb-3 inline-block;
+  }
+
+  .edelyx-state-title {
+    @apply font-teko text-2xl uppercase tracking-wider text-white block;
+  }
+
+  .edelyx-state-desc {
+    @apply font-eczar text-sm text-edelyx-muted mt-1 block;
+  }
+
+  .edelyx-error-banner {
+    @apply bg-edelyx-wine-dark/70 border border-edelyx-accent/70 text-slate-100 rounded-xl p-5 text-center my-4 flex flex-col sm:flex-row items-center justify-center gap-3;
+  }
+
+  /* Paginador estilo Amazon (listado.png) */
+  .edelyx-pagination {
+    @apply mt-10 pt-4 flex justify-center;
+  }
+
+  .edelyx-pagination-bar {
+    @apply inline-flex items-center bg-edelyx-card border border-edelyx-border rounded-xl overflow-hidden shadow-lg;
+  }
+
+  .edelyx-page-nav-btn {
+    @apply px-4 py-2 font-teko text-lg uppercase tracking-wider text-slate-200 hover:text-white hover:bg-edelyx-surface flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-40 disabled:pointer-events-none;
+  }
+
+  .edelyx-page-indicator {
+    @apply px-4 py-2 font-eczar text-xs sm:text-sm text-slate-200 border-x border-edelyx-border/70 bg-edelyx-dark;
+  }
+
+  .edelyx-page-num-btn {
+    @apply min-w-[2.5rem] py-2 px-3 font-eczar text-sm font-semibold text-slate-300 hover:text-white hover:bg-edelyx-surface border-l border-edelyx-border/60 transition-colors cursor-pointer;
+  }
+
+  .edelyx-page-num-active {
+    @apply bg-edelyx-wine text-white border-x border-edelyx-accent font-bold;
+  }
+}
