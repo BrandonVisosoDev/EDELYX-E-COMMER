@@ -1,0 +1,604 @@
+<section class="edelyx-admin-section">
+  <!-- Encabezado Operativo -->
+  <header class="edelyx-admin-header">
+    <div>
+      <h1 class="edelyx-admin-title">Panel Administrativo · Catálogo e Inventario</h1>
+      <span class="edelyx-admin-subtitle">
+        Gestión CRUD sincronizada con CatalogService (PostgreSQL y borrado lógico activo)
+      </span>
+    </div>
+
+    <div class="edelyx-admin-header-actions">
+      @if (lastUpdated()) {
+        <span class="edelyx-admin-stamp">Sincronizado {{ lastUpdated() }}</span>
+      }
+
+      <button
+        type="button"
+        (click)="refreshAll()"
+        [disabled]="isLoadingData()"
+        class="edelyx-admin-refresh-btn"
+      >
+        <i class="pi pi-refresh" [class.pi-spin]="isLoadingData()"></i>
+        <span>Actualizar datos</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Franja KPI Dividida (sin iconos decorativos ni cifras inventadas) -->
+  <div class="edelyx-admin-kpi-strip" aria-label="Resumen de inventario">
+    <div class="edelyx-admin-kpi-cell">
+      <span class="edelyx-admin-kpi-label">Categorías activas</span>
+      <span class="edelyx-admin-kpi-value">{{ categories().length }}</span>
+    </div>
+
+    <div class="edelyx-admin-kpi-cell">
+      <span class="edelyx-admin-kpi-label">Productos activos en catálogo</span>
+      <span class="edelyx-admin-kpi-value">{{ totalElements() }}</span>
+    </div>
+
+    <div class="edelyx-admin-kpi-cell">
+      <span class="edelyx-admin-kpi-label">Existencias en vista actual</span>
+      <span class="edelyx-admin-kpi-value">{{ totalStockUnits() }} u.</span>
+    </div>
+
+    <div class="edelyx-admin-kpi-cell">
+      <span class="edelyx-admin-kpi-label">Stock crítico en vista (≤ 5 u.)</span>
+      <span
+        class="edelyx-admin-kpi-value"
+        [class.edelyx-admin-kpi-value-alert]="lowStockCount() > 0"
+      >
+        {{ lowStockCount() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabs Subrayados -->
+  <div class="edelyx-admin-tabs" role="tablist" aria-label="Secciones de administración">
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTab() === 'PRODUCTS'"
+      (click)="setTab('PRODUCTS')"
+      [class.edelyx-admin-tab-active]="activeTab() === 'PRODUCTS'"
+      class="edelyx-admin-tab"
+    >
+      <span>Productos</span>
+      <span class="edelyx-admin-tab-count">{{ totalElements() }}</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTab() === 'CATEGORIES'"
+      (click)="setTab('CATEGORIES')"
+      [class.edelyx-admin-tab-active]="activeTab() === 'CATEGORIES'"
+      class="edelyx-admin-tab"
+    >
+      <span>Categorías</span>
+      <span class="edelyx-admin-tab-count">{{ categories().length }}</span>
+    </button>
+  </div>
+
+  <!-- Banners de Confirmación / Error -->
+  @if (successMessage()) {
+    <div class="edelyx-admin-banner-ok" role="status">
+      <span>{{ successMessage() }}</span>
+      <button
+        type="button"
+        (click)="clearMessages()"
+        aria-label="Cerrar notificación"
+        class="edelyx-admin-banner-close"
+      >
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="edelyx-admin-banner-err" role="alert">
+      <span>{{ errorMessage() }}</span>
+      <button
+        type="button"
+        (click)="clearMessages()"
+        aria-label="Cerrar alerta"
+        class="edelyx-admin-banner-close"
+      >
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+  }
+
+  <!-- =====================================================================
+       TAB 1: GESTIÓN CRUD DE PRODUCTOS (/api/products)
+       ===================================================================== -->
+  @if (activeTab() === 'PRODUCTS') {
+    <div class="edelyx-admin-workspace">
+      <!-- Formulario Reactivo de Producto -->
+      <aside class="edelyx-admin-form-card" aria-label="Formulario de producto">
+        <div class="edelyx-admin-form-head">
+          <h2 class="edelyx-admin-form-title">
+            {{ editingProductId() !== null ? 'Editar Producto' : 'Nuevo Producto' }}
+          </h2>
+          <span
+            class="edelyx-admin-mode-pill"
+            [class.edelyx-admin-mode-pill-edit]="editingProductId() !== null"
+          >
+            {{ editingProductId() !== null ? 'ID #' + editingProductId() : 'POST /api/products' }}
+          </span>
+        </div>
+
+        <form [formGroup]="productForm" (ngSubmit)="onSaveProduct()" class="edelyx-admin-form" novalidate>
+          <div class="edelyx-admin-row-2">
+            <div class="edelyx-admin-field">
+              <label for="prod-sku" class="edelyx-admin-label">SKU único *</label>
+              <input
+                id="prod-sku"
+                type="text"
+                formControlName="sku"
+                placeholder="RAM-DDR5-16GB"
+                [class.edelyx-admin-input-invalid]="isProductFieldInvalid('sku')"
+                class="edelyx-admin-input"
+              />
+              @if (isProductFieldInvalid('sku')) {
+                <span class="edelyx-admin-field-error">El SKU es obligatorio (máx. 50).</span>
+              }
+            </div>
+
+            <div class="edelyx-admin-field">
+              <label for="prod-category" class="edelyx-admin-label">Categoría *</label>
+              <select
+                id="prod-category"
+                formControlName="categoryId"
+                [class.edelyx-admin-input-invalid]="isProductFieldInvalid('categoryId')"
+                class="edelyx-admin-select"
+              >
+                <option [ngValue]="null" disabled>Selecciona categoría</option>
+                @for (cat of categories(); track cat.id) {
+                  <option [ngValue]="cat.id">{{ cat.name }}</option>
+                }
+              </select>
+              @if (isProductFieldInvalid('categoryId')) {
+                <span class="edelyx-admin-field-error">Selecciona una categoría activa.</span>
+              }
+            </div>
+          </div>
+
+          <div class="edelyx-admin-field">
+            <label for="prod-name" class="edelyx-admin-label">Nombre comercial *</label>
+            <input
+              id="prod-name"
+              type="text"
+              formControlName="name"
+              placeholder="Memoria RAM Kingston Fury 16GB DDR5"
+              [class.edelyx-admin-input-invalid]="isProductFieldInvalid('name')"
+              class="edelyx-admin-input"
+            />
+            @if (isProductFieldInvalid('name')) {
+              <span class="edelyx-admin-field-error">El nombre del producto es obligatorio.</span>
+            }
+          </div>
+
+          <div class="edelyx-admin-row-2">
+            <div class="edelyx-admin-field">
+              <label for="prod-price" class="edelyx-admin-label">Precio MXN (&gt; 0) *</label>
+              <input
+                id="prod-price"
+                type="number"
+                step="0.01"
+                min="0.01"
+                formControlName="price"
+                placeholder="950.00"
+                [class.edelyx-admin-input-invalid]="isProductFieldInvalid('price')"
+                class="edelyx-admin-input"
+              />
+              @if (isProductFieldInvalid('price')) {
+                <span class="edelyx-admin-field-error">Ingresa un precio positivo (&gt; $0.00).</span>
+              }
+            </div>
+
+            <div class="edelyx-admin-field">
+              <label for="prod-stock" class="edelyx-admin-label">Stock disponible (≥ 0) *</label>
+              <input
+                id="prod-stock"
+                type="number"
+                step="1"
+                min="0"
+                formControlName="stock"
+                placeholder="25"
+                [class.edelyx-admin-input-invalid]="isProductFieldInvalid('stock')"
+                class="edelyx-admin-input"
+              />
+              @if (isProductFieldInvalid('stock')) {
+                <span class="edelyx-admin-field-error">Stock entero mayor o igual a 0.</span>
+              }
+            </div>
+          </div>
+
+          <div class="edelyx-admin-field">
+            <label for="prod-image" class="edelyx-admin-label">URL de fotografía *</label>
+            <input
+              id="prod-image"
+              type="url"
+              formControlName="imageUrl"
+              (input)="onImageUrlInput()"
+              placeholder="https://images.unsplash.com/..."
+              [class.edelyx-admin-input-invalid]="isProductFieldInvalid('imageUrl')"
+              class="edelyx-admin-input"
+            />
+            @if (isProductFieldInvalid('imageUrl')) {
+              <span class="edelyx-admin-field-error">La URL de la imagen es obligatoria.</span>
+            }
+
+            @if (previewImageUrl && !previewError()) {
+              <div class="edelyx-admin-preview-row">
+                <div class="edelyx-admin-preview-box">
+                  <img
+                    [src]="previewImageUrl"
+                    alt="Vista previa"
+                    (error)="onPreviewImageError()"
+                    class="edelyx-admin-preview-img"
+                  />
+                </div>
+                <span class="edelyx-admin-preview-caption">Vista previa de imagen cargada</span>
+              </div>
+            }
+          </div>
+
+          <div class="edelyx-admin-field">
+            <label for="prod-desc" class="edelyx-admin-label">Descripción editorial</label>
+            <textarea
+              id="prod-desc"
+              formControlName="description"
+              placeholder="Especificaciones clave del producto..."
+              class="edelyx-admin-textarea"
+            ></textarea>
+          </div>
+
+          <div class="edelyx-admin-form-actions">
+            <button
+              type="submit"
+              [disabled]="isSavingProduct()"
+              class="edelyx-admin-save-btn"
+            >
+              @if (isSavingProduct()) {
+                <i class="pi pi-spin pi-spinner"></i>
+                <span>Guardando...</span>
+              } @else {
+                <i class="pi pi-save"></i>
+                <span>{{ editingProductId() !== null ? 'Guardar Cambios' : 'Registrar Producto' }}</span>
+              }
+            </button>
+
+            @if (editingProductId() !== null) {
+              <button
+                type="button"
+                (click)="resetProductForm()"
+                class="edelyx-admin-reset-btn"
+              >
+                Cancelar
+              </button>
+            }
+          </div>
+        </form>
+      </aside>
+
+      <!-- Tabla de Gestión de Productos -->
+      <div class="edelyx-admin-table-card">
+        <div class="edelyx-admin-toolbar">
+          <h2 class="edelyx-admin-toolbar-title">Inventario Activo</h2>
+
+          <div class="edelyx-admin-search-wrap">
+            <i class="pi pi-search edelyx-admin-search-icon" aria-hidden="true"></i>
+            <input
+              type="text"
+              aria-label="Filtrar productos en tabla"
+              placeholder="Filtrar por nombre, SKU o categoría..."
+              [ngModel]="productFilter()"
+              (ngModelChange)="productFilter.set($event)"
+              class="edelyx-admin-search-input"
+            />
+          </div>
+        </div>
+
+        <div class="edelyx-admin-table-scroll">
+          <table class="edelyx-admin-table">
+            <thead>
+              <tr>
+                <th scope="col" class="edelyx-admin-th">Producto / SKU</th>
+                <th scope="col" class="edelyx-admin-th">Categoría</th>
+                <th scope="col" class="edelyx-admin-th-num">Precio</th>
+                <th scope="col" class="edelyx-admin-th-num">Stock</th>
+                <th scope="col" class="edelyx-admin-th-num">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (prod of filteredProducts(); track prod.id) {
+                <tr
+                  class="edelyx-admin-tr"
+                  [class.edelyx-admin-tr-editing]="editingProductId() === prod.id"
+                >
+                  <td class="edelyx-admin-td">
+                    <div class="edelyx-admin-prod-cell">
+                      <div class="edelyx-admin-prod-thumb">
+                        <img
+                          [src]="prod.imageUrl"
+                          [alt]="prod.name"
+                          loading="lazy"
+                          class="edelyx-admin-prod-img"
+                        />
+                      </div>
+                      <div>
+                        <span class="edelyx-admin-prod-name" [title]="prod.name">
+                          {{ prod.name }}
+                        </span>
+                        <span class="edelyx-admin-prod-sku">{{ prod.sku }} · #{{ prod.id }}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="edelyx-admin-td">
+                    <span class="edelyx-admin-cat-chip">{{ prod.categoryName }}</span>
+                  </td>
+
+                  <td class="edelyx-admin-td-num">${{ formatAmount(prod.price) }}</td>
+
+                  <td class="edelyx-admin-td-num">
+                    <span [class]="getStockPillClass(prod.stock)">{{ prod.stock }} u.</span>
+                  </td>
+
+                  <td class="edelyx-admin-td-num">
+                    <div class="edelyx-admin-actions-cell">
+                      @if (confirmDeleteProductId() === prod.id) {
+                        <div class="edelyx-admin-confirm-inline">
+                          <button
+                            type="button"
+                            [disabled]="deletingId() === prod.id"
+                            (click)="confirmDeleteProduct(prod)"
+                            class="edelyx-admin-confirm-yes"
+                          >
+                            {{ deletingId() === prod.id ? '...' : 'Desactivar' }}
+                          </button>
+                          <button
+                            type="button"
+                            (click)="cancelDeleteProduct()"
+                            class="edelyx-admin-confirm-no"
+                          >
+                            No
+                          </button>
+                        </div>
+                      } @else {
+                        <button
+                          type="button"
+                          (click)="startEditProduct(prod)"
+                          [attr.aria-label]="'Editar ' + prod.name"
+                          class="edelyx-admin-icon-btn"
+                        >
+                          <i class="pi pi-pencil"></i>
+                          <span>Editar</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          (click)="askDeleteProduct(prod.id)"
+                          [attr.aria-label]="'Desactivar ' + prod.name"
+                          class="edelyx-admin-delete-btn"
+                        >
+                          <i class="pi pi-trash"></i>
+                          <span>Baja</span>
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="edelyx-admin-empty-row">
+                    No hay productos activos que coincidan con el criterio actual.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación de Productos -->
+        <div class="edelyx-admin-pager">
+          <span>
+            Página {{ totalPages() === 0 ? 0 : currentPage() + 1 }} de {{ totalPages() }} ·
+            {{ totalElements() }} productos registrados
+          </span>
+
+          <div class="edelyx-admin-pager-controls">
+            <button
+              type="button"
+              [disabled]="currentPage() === 0 || isLoadingData()"
+              (click)="prevPage()"
+              class="edelyx-admin-icon-btn"
+            >
+              <i class="pi pi-chevron-left"></i>
+              <span>Anterior</span>
+            </button>
+
+            <button
+              type="button"
+              [disabled]="currentPage() + 1 >= totalPages() || isLoadingData()"
+              (click)="nextPage()"
+              class="edelyx-admin-icon-btn"
+            >
+              <span>Siguiente</span>
+              <i class="pi pi-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- =====================================================================
+       TAB 2: GESTIÓN CRUD DE CATEGORÍAS (/api/categories)
+       ===================================================================== -->
+  @if (activeTab() === 'CATEGORIES') {
+    <div class="edelyx-admin-workspace">
+      <!-- Formulario Reactivo de Categoría -->
+      <aside class="edelyx-admin-form-card" aria-label="Formulario de categoría">
+        <div class="edelyx-admin-form-head">
+          <h2 class="edelyx-admin-form-title">
+            {{ editingCategoryId() !== null ? 'Editar Categoría' : 'Nueva Categoría' }}
+          </h2>
+          <span
+            class="edelyx-admin-mode-pill"
+            [class.edelyx-admin-mode-pill-edit]="editingCategoryId() !== null"
+          >
+            {{ editingCategoryId() !== null ? 'ID #' + editingCategoryId() : 'POST /api/categories' }}
+          </span>
+        </div>
+
+        <form [formGroup]="categoryForm" (ngSubmit)="onSaveCategory()" class="edelyx-admin-form" novalidate>
+          <div class="edelyx-admin-field">
+            <label for="cat-name" class="edelyx-admin-label">Nombre de la categoría *</label>
+            <input
+              id="cat-name"
+              type="text"
+              formControlName="name"
+              placeholder="Componentes y Hardware"
+              [class.edelyx-admin-input-invalid]="isCategoryFieldInvalid()"
+              class="edelyx-admin-input"
+            />
+            @if (isCategoryFieldInvalid()) {
+              <span class="edelyx-admin-field-error">
+                El nombre de la categoría es obligatorio y no puede estar en blanco.
+              </span>
+            }
+          </div>
+
+          <div class="edelyx-admin-form-actions">
+            <button
+              type="submit"
+              [disabled]="isSavingCategory()"
+              class="edelyx-admin-save-btn"
+            >
+              @if (isSavingCategory()) {
+                <i class="pi pi-spin pi-spinner"></i>
+                <span>Guardando...</span>
+              } @else {
+                <i class="pi pi-save"></i>
+                <span>{{ editingCategoryId() !== null ? 'Actualizar Nombre' : 'Crear Categoría' }}</span>
+              }
+            </button>
+
+            @if (editingCategoryId() !== null) {
+              <button
+                type="button"
+                (click)="resetCategoryForm()"
+                class="edelyx-admin-reset-btn"
+              >
+                Cancelar
+              </button>
+            }
+          </div>
+        </form>
+      </aside>
+
+      <!-- Tabla de Gestión de Categorías -->
+      <div class="edelyx-admin-table-card">
+        <div class="edelyx-admin-toolbar">
+          <h2 class="edelyx-admin-toolbar-title">Categorías Activas</h2>
+
+          <div class="edelyx-admin-search-wrap">
+            <i class="pi pi-search edelyx-admin-search-icon" aria-hidden="true"></i>
+            <input
+              type="text"
+              aria-label="Filtrar categorías"
+              placeholder="Filtrar categoría por nombre o ID..."
+              [ngModel]="categoryFilter()"
+              (ngModelChange)="categoryFilter.set($event)"
+              class="edelyx-admin-search-input"
+            />
+          </div>
+        </div>
+
+        <div class="edelyx-admin-table-scroll">
+          <table class="edelyx-admin-table">
+            <thead>
+              <tr>
+                <th scope="col" class="edelyx-admin-th">ID</th>
+                <th scope="col" class="edelyx-admin-th">Nombre Oficial</th>
+                <th scope="col" class="edelyx-admin-th-num">Productos en Vista</th>
+                <th scope="col" class="edelyx-admin-th-num">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (cat of filteredCategories(); track cat.id) {
+                <tr
+                  class="edelyx-admin-tr"
+                  [class.edelyx-admin-tr-editing]="editingCategoryId() === cat.id"
+                >
+                  <td class="edelyx-admin-td">
+                    <span class="edelyx-admin-prod-sku">#{{ cat.id }}</span>
+                  </td>
+
+                  <td class="edelyx-admin-td">
+                    <span class="edelyx-admin-prod-name">{{ cat.name }}</span>
+                  </td>
+
+                  <td class="edelyx-admin-td-num">{{ countProductsInCategory(cat.id) }}</td>
+
+                  <td class="edelyx-admin-td-num">
+                    <div class="edelyx-admin-actions-cell">
+                      @if (confirmDeleteCategoryId() === cat.id) {
+                        <div class="edelyx-admin-confirm-inline">
+                          <button
+                            type="button"
+                            [disabled]="deletingId() === cat.id"
+                            (click)="confirmDeleteCategory(cat)"
+                            class="edelyx-admin-confirm-yes"
+                          >
+                            {{ deletingId() === cat.id ? '...' : 'Desactivar' }}
+                          </button>
+                          <button
+                            type="button"
+                            (click)="cancelDeleteCategory()"
+                            class="edelyx-admin-confirm-no"
+                          >
+                            No
+                          </button>
+                        </div>
+                      } @else {
+                        <button
+                          type="button"
+                          (click)="startEditCategory(cat)"
+                          [attr.aria-label]="'Editar categoría ' + cat.name"
+                          class="edelyx-admin-icon-btn"
+                        >
+                          <i class="pi pi-pencil"></i>
+                          <span>Editar</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          (click)="askDeleteCategory(cat.id)"
+                          [attr.aria-label]="'Desactivar categoría ' + cat.name"
+                          class="edelyx-admin-delete-btn"
+                        >
+                          <i class="pi pi-trash"></i>
+                          <span>Baja</span>
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="edelyx-admin-empty-row">
+                    No se encontraron categorías activas.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</section>

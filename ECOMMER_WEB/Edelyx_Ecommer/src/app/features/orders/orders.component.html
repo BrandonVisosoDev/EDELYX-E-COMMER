@@ -1,0 +1,251 @@
+<section class="edelyx-order-section">
+  <header class="edelyx-order-header">
+    <div>
+      <h1 class="edelyx-order-title">Rastreo y Recibo Digital</h1>
+      <span class="edelyx-order-subtitle">
+        Consulta el estado en vivo de tu compra mediante tu folio oficial EDELYX
+      </span>
+    </div>
+
+    <a routerLink="/" class="edelyx-checkout-back-link">
+      <i class="pi pi-arrow-left"></i>
+      <span>Volver al Catálogo</span>
+    </a>
+  </header>
+
+  <!-- Buscador por Folio (ORD-XXXXXXXX) -->
+  <div class="edelyx-order-search-card">
+    <form [formGroup]="searchForm" (ngSubmit)="onSearchSubmit()" class="edelyx-order-search-form">
+      <div class="edelyx-order-search-field">
+        <label for="order-folio-input" class="edelyx-order-search-label">
+          Folio de la orden (formato ORD-XXXXXXXX)
+        </label>
+        <div class="edelyx-order-search-input-wrap">
+          <i class="pi pi-hashtag edelyx-order-search-icon" aria-hidden="true"></i>
+          <input
+            id="order-folio-input"
+            type="text"
+            formControlName="orderNumber"
+            placeholder="ORD-A1B2C3D4"
+            autocomplete="off"
+            spellcheck="false"
+            class="edelyx-order-search-input"
+          />
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="isLoading()"
+        class="edelyx-order-search-btn"
+      >
+        @if (isLoading()) {
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Consultando...</span>
+        } @else {
+          <i class="pi pi-search"></i>
+          <span>Consultar Folio</span>
+        }
+      </button>
+    </form>
+  </div>
+
+  <!-- Confirmación tras cancelación -->
+  @if (feedbackMessage()) {
+    <div class="edelyx-order-feedback" role="status">
+      <i class="pi pi-check-circle"></i>
+      <span>{{ feedbackMessage() }}</span>
+    </div>
+  }
+
+  <!-- Error de búsqueda o negocio -->
+  @if (errorMessage()) {
+    <div class="edelyx-checkout-alert" role="alert">
+      <i class="pi pi-exclamation-triangle edelyx-checkout-alert-icon"></i>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  <!-- Estado de carga -->
+  @if (isLoading()) {
+    <div class="edelyx-state-box">
+      <i class="pi pi-spin pi-spinner edelyx-spinner"></i>
+      <span class="edelyx-state-title">Recuperando Recibo Digital</span>
+      <span class="edelyx-state-desc">Verificando folio en OrderService...</span>
+    </div>
+  }
+
+  <!-- Recibo Digital Oficial -->
+  @if (!isLoading() && order(); as currentOrder) {
+    <article #receiptCard class="edelyx-order-receipt" aria-label="Recibo digital de compra">
+      <!-- Encabezado con Folio y Badge de OrderStatus -->
+      <div class="edelyx-order-receipt-top">
+        <div class="edelyx-order-folio-group">
+          <span class="edelyx-order-folio-caption">Comprobante Oficial de Compra</span>
+          <div class="edelyx-order-folio-row">
+            <span class="edelyx-order-folio-code">{{ currentOrder.orderNumber }}</span>
+            <button
+              type="button"
+              (click)="copyOrderNumber(currentOrder.orderNumber)"
+              class="edelyx-order-copy-btn"
+              aria-label="Copiar folio de la orden"
+            >
+              <i class="pi" [class.pi-check]="copiedFolio()" [class.pi-copy]="!copiedFolio()"></i>
+              <span>{{ copiedFolio() ? 'Copiado' : 'Copiar folio' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <span [class]="getStatusBadgeClass(currentOrder.status)">
+          <i class="pi" [ngClass]="getStatusIcon(currentOrder.status)"></i>
+          <span>{{ getStatusLabel(currentOrder.status) }} ({{ currentOrder.status }})</span>
+        </span>
+      </div>
+
+      <!-- Metadatos del Cliente y Fecha -->
+      <div class="edelyx-order-meta-grid">
+        <div class="edelyx-order-meta-cell">
+          <span class="edelyx-order-meta-label">Titular registrado</span>
+          <span class="edelyx-order-meta-value">{{ currentOrder.customerEmail }}</span>
+        </div>
+
+        <div class="edelyx-order-meta-cell">
+          <span class="edelyx-order-meta-label">Fecha de emisión</span>
+          <span class="edelyx-order-meta-value">{{ formatDate(currentOrder.createdAt) }}</span>
+        </div>
+
+        <div class="edelyx-order-meta-cell">
+          <span class="edelyx-order-meta-label">Artículos amparados</span>
+          <span class="edelyx-order-meta-value">
+            {{ totalUnits() }} {{ totalUnits() === 1 ? 'unidad' : 'unidades' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Seguimiento de Estado o Franja de Cancelación -->
+      @if (currentOrder.status === 'CANCELLED') {
+        <div class="edelyx-order-cancelled-strip">
+          <i class="pi pi-replay"></i>
+          <span>
+            Orden cancelada · Se emitió el evento <code>order.cancelled</code> para restaurar las
+            existencias en el catálogo.
+          </span>
+        </div>
+      } @else {
+        <div class="edelyx-order-steps" aria-label="Progreso del pedido">
+          @for (step of progressSteps; track step.key) {
+            <div
+              class="edelyx-order-step"
+              [class.edelyx-order-step-active]="isStepActive(step.key)"
+              [class.edelyx-order-step-done]="isStepDone(step.key)"
+            >
+              <i class="pi" [ngClass]="isStepDone(step.key) ? 'pi-check' : step.icon"></i>
+              <span>{{ step.label }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Desglose Histórico de Productos -->
+      <div class="edelyx-order-table-wrap">
+        <table class="edelyx-order-table">
+          <thead>
+            <tr>
+              <th scope="col" class="edelyx-order-th">Producto (Snapshot Histórico)</th>
+              <th scope="col" class="edelyx-order-th-num">Cant.</th>
+              <th scope="col" class="edelyx-order-th-num">Precio Unitario</th>
+              <th scope="col" class="edelyx-order-th-num">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of currentOrder.items; track item.productId) {
+              <tr class="edelyx-order-tr">
+                <td class="edelyx-order-td">
+                  <span class="edelyx-order-td-name">{{ item.productName }}</span>
+                  <span class="edelyx-order-td-id">ID Catálogo #{{ item.productId }}</span>
+                </td>
+                <td class="edelyx-order-td-num">{{ item.quantity }}</td>
+                <td class="edelyx-order-td-num">${{ formatAmount(item.unitPrice) }}</td>
+                <td class="edelyx-order-td-subtotal">${{ formatAmount(item.subTotal) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pie del Recibo: Cancelación Condicional y Gran Total -->
+      <footer class="edelyx-order-receipt-footer">
+        <div class="edelyx-order-cancel-zone">
+          @if (!confirmingCancel()) {
+            <button
+              type="button"
+              [disabled]="!canCancelOrder() || isCancelling()"
+              (click)="requestCancelConfirmation()"
+              class="edelyx-order-cancel-btn"
+            >
+              <i class="pi pi-ban"></i>
+              <span>Cancelar Orden</span>
+            </button>
+
+            @if (!canCancelOrder()) {
+              <span class="edelyx-order-cancel-note">
+                {{ getCancelDisabledReason(currentOrder.status) }}
+              </span>
+            } @else {
+              <span class="edelyx-order-cancel-note">
+                Disponible mientras el pedido permanezca en estado Creada o Confirmada.
+              </span>
+            }
+          } @else {
+            <div class="edelyx-order-cancel-confirm" role="alertdialog" aria-label="Confirmar cancelación">
+              <span class="edelyx-order-cancel-confirm-text">
+                ¿Cancelar folio {{ currentOrder.orderNumber }} y reintegrar stock?
+              </span>
+              <button
+                type="button"
+                [disabled]="isCancelling()"
+                (click)="confirmCancelOrder()"
+                class="edelyx-order-cancel-yes"
+              >
+                {{ isCancelling() ? 'Cancelando...' : 'Sí, cancelar orden' }}
+              </button>
+              <button
+                type="button"
+                [disabled]="isCancelling()"
+                (click)="dismissCancelConfirmation()"
+                class="edelyx-order-cancel-no"
+              >
+                Conservar
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="edelyx-order-totals-box">
+          <div class="edelyx-order-total-row">
+            <span>Envío Prioritario EDELYX</span>
+            <span class="edelyx-shipping-free">GRATIS</span>
+          </div>
+          <div class="edelyx-order-grand-row">
+            <span class="edelyx-order-grand-label">Total Pagado</span>
+            <span class="edelyx-order-grand-value">
+              ${{ formatAmount(currentOrder.totalAmount) }}
+            </span>
+          </div>
+        </div>
+      </footer>
+    </article>
+  }
+
+  <!-- Estado Inicial cuando aún no se consulta un folio -->
+  @if (!isLoading() && !order() && !errorMessage()) {
+    <div class="edelyx-state-box">
+      <i class="pi pi-receipt edelyx-state-icon"></i>
+      <span class="edelyx-state-title">Ingresa tu número de folio</span>
+      <span class="edelyx-state-desc">
+        Escribe el código <code>ORD-XXXXXXXX</code> generado al finalizar tu compra para visualizar
+        tu recibo digital o solicitar una cancelación.
+      </span>
+    </div>
+  }
+</section>

@@ -31,8 +31,20 @@ export class NavbarComponent implements OnInit {
   cartCount = this.cartService.totalItems;
 
   private initializedCounter = false;
+  private initializedCategories = false;
 
   constructor() {
+    effect(() => {
+      const version = this.categoryService.categoriesVersion();
+      if (!this.initializedCategories) {
+        this.initializedCategories = true;
+        return;
+      }
+      if (version > 0) {
+        this.reloadCategories();
+      }
+    });
+
     effect(() => {
       const count = this.totalItems();
       const badge = this.counterRef()?.nativeElement;
@@ -62,14 +74,18 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.categoryService.getCategories().subscribe({
-      next: (data) => this.categories.set(data),
-      error: (err) => console.error('Error al cargar categorías en Navbar:', err),
-    });
+    this.reloadCategories();
 
     this.route.queryParams.subscribe((params) => {
       this.selectedCategoryId.set(params['category'] ? String(params['category']) : '');
       this.searchQuery.set(params['q'] ? String(params['q']) : '');
+    });
+  }
+
+  private reloadCategories(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (data) => this.categories.set(data),
+      error: (err) => console.error('Error al cargar categorías en Navbar:', err),
     });
   }
 

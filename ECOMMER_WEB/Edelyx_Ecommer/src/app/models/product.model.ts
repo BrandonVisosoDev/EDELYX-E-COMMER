@@ -9,3 +9,13 @@ export interface Product {
   categoryId: number;
   categoryName: string;
 }
+
+export interface ProductPayload {
+  sku: string;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  imageUrl: string;
+  categoryId: number;
+}
